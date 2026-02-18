@@ -1,0 +1,42 @@
+# ─── Environment ───────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# ─── Foundry ────────────────────────────────────────────────────────
+contracts/cache/
+contracts/out/
+# NOTE: contracts/out/ is gitignored globally.
+# ABIs are synced MANUALLY to frontend/src/abi/ by Person A after each deploy.
+# Never commit compiled artifacts — only the manually synced ABIs.
+
+# ─── Next.js ────────────────────────────────────────────────────────
+frontend/.next/
+frontend/out/
+frontend/node_modules/
+frontend/.vercel
+
+# ─── Python ─────────────────────────────────────────────────────────
+agents/venv/
+agents/__pycache__/
+agents/**/__pycache__/
+agents/*.pyc
+agents/**/*.pyc
+agents/.mypy_cache/
+agents/.pytest_cache/
+
+# ─── pnpm ───────────────────────────────────────────────────────────
+node_modules/
+.pnpm-store/
+
+# ─── OS ─────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ─── Editor ─────────────────────────────────────────────────────────
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
