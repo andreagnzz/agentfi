@@ -22,15 +22,21 @@ export const ogTestnet = defineChain({
 });
 
 export const adiTestnet = defineChain({
-  id: Number(process.env.NEXT_PUBLIC_ADI_CHAIN_ID ?? "2648"),
-  name: "ADI Testnet",
+  id: Number(process.env.NEXT_PUBLIC_ADI_CHAIN_ID ?? "99999"),
+  name: "ADI Network AB Testnet",
   nativeCurrency: { name: "ADI", symbol: "ADI", decimals: 18 },
   rpcUrls: {
     default: {
       http: [
         process.env.NEXT_PUBLIC_ADI_RPC ??
-          "https://testnet-rpc.adi.foundation",
+          "https://rpc.ab.testnet.adifoundation.ai/",
       ],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: "ADI Explorer",
+      url: "https://explorer.ab.testnet.adifoundation.ai/",
     },
   },
   testnet: true,
