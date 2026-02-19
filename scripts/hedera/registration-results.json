@@ -1,0 +1,26 @@
+[
+  {
+    "name": "AgentFi Portfolio Analyzer",
+    "accountId": "0.0.7977799",
+    "inboundTopicId": "0.0.7977803",
+    "outboundTopicId": "0.0.7977802",
+    "profileTopicId": "0.0.7977808",
+    "operatorId": "0.0.7977803@0.0.7977799"
+  },
+  {
+    "name": "AgentFi Yield Optimizer",
+    "accountId": "0.0.7977811",
+    "inboundTopicId": "0.0.7977813",
+    "outboundTopicId": "0.0.7977812",
+    "profileTopicId": "0.0.7977817",
+    "operatorId": "0.0.7977813@0.0.7977811"
+  },
+  {
+    "name": "AgentFi Risk Scorer",
+    "accountId": "0.0.7977819",
+    "inboundTopicId": "0.0.7977822",
+    "outboundTopicId": "0.0.7977821",
+    "profileTopicId": "0.0.7977825",
+    "operatorId": "0.0.7977822@0.0.7977819"
+  }
+]
