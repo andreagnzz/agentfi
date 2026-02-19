@@ -1,3 +1,9 @@
+// STATUS: Merkle roots computed successfully. On-chain submission blocked by
+// 0G Galileo testnet infrastructure issue — Market proxy (0x26c8...) reverts
+// on execution (minimal proxy bytecode, implementation not wired).
+// Re-run this script when testnet is fixed: node upload-metadata.js
+// Root hashes saved in metadata/storage-refs.json
+
 import dotenv from "dotenv";
 import { ZgFile, Indexer } from "@0glabs/0g-ts-sdk";
 import { ethers } from "ethers";
