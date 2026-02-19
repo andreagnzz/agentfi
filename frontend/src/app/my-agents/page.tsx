@@ -1,7 +1,8 @@
 "use client"
 import { useState, useEffect } from "react"
 import TiltedCard from "@/components/TiltedCard"
-import GlareHover from "@/components/GlareHover"
+import BlurText from "@/components/BlurText"
+import ElectricBorder from "@/components/ElectricBorder"
 import AnimatedContent from "@/components/AnimatedContent"
 import SpotlightCard from "@/components/SpotlightCard"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -191,14 +192,44 @@ export default function MyAgentsPage() {
       </div>
 
       {/* CTA */}
-      <div style={{ background: "#2E2010", border: "1px solid #5C4422", borderRadius: 12, padding: 28, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <div style={{ padding: "28px 0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div>
-          <h3 style={{ fontFamily: "monospace", color: "#F5ECD7", fontSize: 18, margin: "0 0 8px" }}>Expand your fleet</h3>
-          <p style={{ color: "#9A8060", fontSize: 14, margin: 0 }}>Add specialized agents to your iNFT collection</p>
+          <div style={{ fontFamily: "monospace", fontSize: 22, color: "#F5ECD7", fontWeight: "bold", marginBottom: 8 }}>
+            <BlurText text="Expand your fleet" animateBy="words" direction="bottom" delay={120} stepDuration={0.4} />
+          </div>
+          <div style={{ color: "#9A8060", fontSize: 14 }}>
+            <BlurText text="Add specialized agents to your iNFT collection" animateBy="words" direction="bottom" delay={60} stepDuration={0.3} />
+          </div>
         </div>
-        <GlareHover width="200px" height="44px" background="#241A0E" borderRadius="8px" borderColor="#5C4422" glareColor="#C9A84C" glareOpacity={0.25} transitionDuration={600}>
-          <a href="/marketplace" style={{ color: "#C9A84C", fontFamily: "monospace", fontSize: 13, fontWeight: "bold", textDecoration: "none", letterSpacing: "0.1em" }}>Browse Marketplace {"\u2192"}</a>
-        </GlareHover>
+
+        <ElectricBorder
+          color="#C9A84C"
+          speed={1.2}
+          chaos={0.08}
+          borderRadius={10}
+          style={{ borderRadius: 10 }}
+        >
+          <a
+            href="/marketplace"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "10px 24px",
+              color: "#C9A84C",
+              fontFamily: "monospace",
+              fontSize: 13,
+              fontWeight: "bold",
+              textDecoration: "none",
+              letterSpacing: "0.1em",
+              background: "#1A1208",
+              borderRadius: 10,
+              whiteSpace: "nowrap",
+            }}
+          >
+            Browse Marketplace {"\u2192"}
+          </a>
+        </ElectricBorder>
       </div>
 
     </main>
