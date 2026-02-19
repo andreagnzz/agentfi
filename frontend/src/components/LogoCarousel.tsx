@@ -12,9 +12,10 @@ const OGLogo = () => (
 
 const HederaLogo = () => (
   <svg viewBox="0 0 100 100" width="44" height="44" fill="none">
-    <rect x="22" y="20" width="12" height="60" fill="#C9A84C" rx="2"/>
-    <rect x="66" y="20" width="12" height="60" fill="#C9A84C" rx="2"/>
-    <rect x="22" y="43" width="56" height="14" fill="#C9A84C" rx="2"/>
+    <circle cx="50" cy="50" r="48" fill="#C9A84C"/>
+    <rect x="26" y="25" width="10" height="50" fill="#1A1208" rx="1"/>
+    <rect x="64" y="25" width="10" height="50" fill="#1A1208" rx="1"/>
+    <rect x="26" y="42" width="48" height="16" fill="#1A1208" rx="1"/>
   </svg>
 )
 
@@ -46,13 +47,9 @@ export default function LogoCarousel() {
             style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}
           >
             {/* Spinning ring + logo */}
-            <div style={{ position: "relative", width: 140, height: 140, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              {/* CircularText behind */}
-              <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <CircularText text={chain.text} spinDuration={chain.spinDuration} onHover={chain.onHover} />
-              </div>
-              {/* Logo floating in center */}
-              <div style={{ position: "relative", zIndex: 10, display: "flex", alignItems: "center", justifyContent: "center", width: 72, height: 72 }}>
+            <div style={{ position: "relative", width: 140, height: 140 }}>
+              <CircularText text={chain.text} spinDuration={chain.spinDuration} onHover={chain.onHover} />
+              <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", zIndex: 10, display: "flex", alignItems: "center", justifyContent: "center", width: 72, height: 72 }}>
                 <Logo />
               </div>
             </div>

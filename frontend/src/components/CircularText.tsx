@@ -62,24 +62,27 @@ const CircularText: FC<CircularTextProps> = ({
       onMouseLeave={handleHoverEnd}
     >
       {letters.map((letter, i) => {
-        const rotationDeg = (360 / letters.length) * i
-        const transform = `rotateZ(${rotationDeg}deg) translateY(-60px)`
+        const angle = (360 / letters.length) * i - 90 // start from top
+        const angleRad = (angle * Math.PI) / 180
+        const radius = 62
+        const x = 70 + radius * Math.cos(angleRad) // 70 = half of 140px container
+        const y = 70 + radius * Math.sin(angleRad)
+        const rotateLetter = angle + 90 // rotate each letter to face outward
+
         return (
           <span
             key={i}
             style={{
               position: "absolute",
-              top: "50%",
-              left: "50%",
+              left: x,
+              top: y,
               fontSize: 10,
               fontFamily: "monospace",
-              letterSpacing: "0.12em",
+              letterSpacing: "0.05em",
               color: "#C9A84C",
               opacity: 0.75,
-              transform,
-              transformOrigin: "0 0",
-              marginTop: -6,
-              marginLeft: -3,
+              transform: `translate(-50%, -50%) rotate(${rotateLetter}deg)`,
+              transformOrigin: "center center",
             }}
           >
             {letter}
