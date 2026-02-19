@@ -3,19 +3,31 @@ import { motion } from "motion/react"
 import CircularText from "./CircularText"
 
 const OGLogo = () => (
-  <svg viewBox="0 0 100 100" width="44" height="44" fill="none">
-    <circle cx="32" cy="50" r="22" stroke="#C9A84C" strokeWidth="8" fill="none"/>
-    <line x1="18" y1="64" x2="46" y2="36" stroke="#1A1208" strokeWidth="8"/>
-    <path d="M58 30 A22 22 0 1 1 58 70 L58 52 L74 52" stroke="#C9A84C" strokeWidth="8" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+  <svg viewBox="0 0 120 60" width="56" height="28" fill="none">
+    {/* Left circle with slash */}
+    <circle cx="30" cy="30" r="26" stroke="#C9A84C" strokeWidth="7" fill="none"/>
+    <line x1="14" y1="46" x2="46" y2="14" stroke="#C9A84C" strokeWidth="6" strokeLinecap="round"/>
+    {/* Right G shape */}
+    <path
+      d="M90 8 A26 26 0 1 0 90 52 L90 34 L104 34"
+      stroke="#C9A84C"
+      strokeWidth="7"
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
 )
 
 const HederaLogo = () => (
   <svg viewBox="0 0 100 100" width="44" height="44" fill="none">
     <circle cx="50" cy="50" r="48" fill="#C9A84C"/>
-    <rect x="26" y="25" width="10" height="50" fill="#1A1208" rx="1"/>
-    <rect x="64" y="25" width="10" height="50" fill="#1A1208" rx="1"/>
-    <rect x="26" y="42" width="48" height="16" fill="#1A1208" rx="1"/>
+    {/* Left pillar */}
+    <rect x="24" y="22" width="11" height="56" fill="#1A1208" rx="1"/>
+    {/* Right pillar */}
+    <rect x="65" y="22" width="11" height="56" fill="#1A1208" rx="1"/>
+    {/* Crossbar — thin, at true center */}
+    <rect x="24" y="44" width="52" height="12" fill="#1A1208" rx="1"/>
   </svg>
 )
 
