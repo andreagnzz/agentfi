@@ -4,13 +4,16 @@ import { useState } from "react"
 import { Space_Mono, DM_Sans } from "next/font/google"
 import PixelTransition from "@/components/PixelTransition"
 import BlurText from "@/components/BlurText"
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuGroup,
+  DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 const spaceMono = Space_Mono({ subsets: ["latin"], weight: ["400", "700"] })
 const dmSans = DM_Sans({ subsets: ["latin"] })
 
 type Category = "All" | "DeFi" | "Risk" | "Yield"
 
-const CATEGORIES: Category[] = ["All", "DeFi", "Risk", "Yield"]
 
 const CATEGORY_COLORS: Record<string, string> = {
   DeFi: "rgba(201,168,76,0.1)",
@@ -111,28 +114,47 @@ export default function MarketplacePage() {
             outline: "none",
           }}
         />
-        <div style={{ display: "flex", gap: 8 }}>
-          {CATEGORIES.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setActiveFilter(cat)}
-              className={spaceMono.className}
-              style={{
-                background: activeFilter === cat ? "#C9A84C" : "#1A1208",
-                color: activeFilter === cat ? "#1A1208" : "#9A8060",
-                border: activeFilter === cat ? "1px solid #C9A84C" : "1px solid #3D2E1A",
-                borderRadius: 999,
-                padding: "6px 16px",
-                fontSize: 12,
-                fontWeight: 700,
-                cursor: "pointer",
-                transition: "all 0.2s",
-              }}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button style={{
+              background: "#241A0E",
+              border: "1px solid #5C4422",
+              borderRadius: 8,
+              padding: "8px 16px",
+              color: "#C9A84C",
+              fontFamily: "monospace",
+              fontSize: 12,
+              fontWeight: "bold",
+              letterSpacing: "0.08em",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              transition: "border-color 0.2s",
+            }}
+              onMouseOver={e => (e.currentTarget.style.borderColor = "#C9A84C")}
+              onMouseOut={e => (e.currentTarget.style.borderColor = "#5C4422")}
             >
-              {cat}
+              {activeFilter === "All" ? "All Categories" : activeFilter} {"\u25BE"}
             </button>
-          ))}
-        </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            <DropdownMenuLabel>Filter by Category</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              {(["All", "DeFi", "Yield", "Risk"] as Category[]).map(cat => (
+                <DropdownMenuItem
+                  key={cat}
+                  onClick={() => setActiveFilter(cat)}
+                  style={{ color: activeFilter === cat ? "#C9A84C" : "#F5ECD7" }}
+                >
+                  {activeFilter === cat && <span style={{ marginRight: 8 }}>{"\u2713"}</span>}
+                  {cat === "All" ? "All Categories" : cat}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* ── Section 2: Agent Grid ── */}
