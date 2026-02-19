@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Space_Mono, DM_Sans } from "next/font/google"
 import PixelTransition from "@/components/PixelTransition"
+import BlurText from "@/components/BlurText"
 
 const spaceMono = Space_Mono({ subsets: ["latin"], weight: ["400", "700"] })
 const dmSans = DM_Sans({ subsets: ["latin"] })
@@ -31,7 +32,6 @@ const AGENTS = [
   { name: "Compliance Monitor", category: "Risk" as const, desc: "Monitors transactions for FATF Travel Rule compliance on ADI Chain", price: "0.006", rating: "4.8", queries: "678" },
 ]
 
-const BADGES = ["ERC-7857 Standard", "0G Chain", "Transferable"]
 
 export default function MarketplacePage() {
   const [activeFilter, setActiveFilter] = useState<Category>("All")
@@ -217,43 +217,13 @@ export default function MarketplacePage() {
         ))}
       </div>
 
-      {/* ── Section 3: Featured iNFT Banner ── */}
-      <div style={{
-        background: "#2E2010",
-        border: "1px solid #5C4422",
-        borderRadius: 12,
-        padding: 28,
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        gap: 24,
-        flexWrap: "wrap" as const,
-      }}>
-        <div style={{ flex: 1, minWidth: 280 }}>
-          <div className={spaceMono.className} style={{ color: "#F5ECD7", fontSize: 20, fontWeight: 700, marginBottom: 8 }}>
-            Own Your Agent
-          </div>
-          <div style={{ color: "#9A8060", fontSize: 14, lineHeight: 1.6 }}>
-            Every hired agent is minted as an iNFT on 0G Chain. Transfer it, sell it, or keep earning.
-          </div>
+      {/* ── Section 3: Own Your Agent ── */}
+      <div style={{ padding: "28px 0" }}>
+        <div style={{ fontFamily: "monospace", fontSize: 22, color: "#F5ECD7", fontWeight: "bold", marginBottom: 8 }}>
+          <BlurText text="Own Your Agent" animateBy="words" direction="bottom" delay={120} stepDuration={0.4} />
         </div>
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" as const }}>
-          {BADGES.map(badge => (
-            <span
-              key={badge}
-              className={spaceMono.className}
-              style={{
-                background: "#1A1208",
-                border: "1px solid #3D2E1A",
-                color: "#C9A84C",
-                fontSize: 11,
-                padding: "6px 12px",
-                borderRadius: 6,
-              }}
-            >
-              {badge}
-            </span>
-          ))}
+        <div style={{ color: "#9A8060", fontSize: 14 }}>
+          <BlurText text="Every hired agent is minted as an iNFT on 0G Chain. Transfer it, sell it, or keep earning." animateBy="words" direction="bottom" delay={40} stepDuration={0.25} />
         </div>
       </div>
     </div>
