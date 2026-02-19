@@ -82,3 +82,6 @@ To activate x402 (Kite AI) when ready:
 3. Set KITE_API_KEY + KITE_AGENT_PASSPORT_ID in .env
 4. Swap MockPaymentProvider → X402PaymentProvider in agents/api.py
 5. No other file needs to change.
+
+## CRITICAL RULE
+Never put Claude Code in co author in GitHub commits.

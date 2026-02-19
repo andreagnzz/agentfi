@@ -1,11 +1,11 @@
 {
   "16600": {
     "chainName": "0G Testnet",
-    "AgentNFT": "",
-    "AgentMarketplace": ""
+    "AgentNFT": "0x10e3399025e930da7b4d4be71181157ccee4e882",
+    "AgentMarketplace": "0x1a9e3f39cf83e53ca34933f81b409a92ad004246"
   },
-  "0": {
+  "99999": {
     "chainName": "ADI Testnet",
-    "AgentPayment": ""
+    "AgentPayment": "0x10e3399025e930da7b4d4be71181157ccee4e882"
   }
 }
