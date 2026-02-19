@@ -1,8 +1,11 @@
 "use client"
 import { useState } from "react"
+import dynamic from "next/dynamic"
 import GlareHover from "@/components/GlareHover"
 import PixelTransition from "@/components/PixelTransition"
 import AnimatedContent from "@/components/AnimatedContent"
+
+const MagicBento = dynamic(() => import("@/components/MagicBento"), { ssr: false })
 
 const AGENTS = [
   { id: "#0042", name: "Portfolio Analyzer", model: "gpt-4o-mini", capabilities: "DeFi Analysis", minted: "Feb 18, 2026", queries: "47", earned: "0.012 ADI", chain: "0G Chain", status: "ACTIVE" },
@@ -32,23 +35,20 @@ export default function MyAgentsPage() {
   return (
     <main style={{ minHeight: "100vh", padding: "32px 48px", position: "relative", zIndex: 1 }}>
 
-      {/* Title */}
-      <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontFamily: "monospace", fontSize: 28, color: "#F5ECD7", margin: 0, letterSpacing: "0.02em" }}>My Agents</h1>
-        <p style={{ color: "#9A8060", fontSize: 14, marginTop: 8 }}>Your iNFT collection on 0G Chain</p>
-      </div>
-
-      {/* Wallet Summary */}
-      <div style={{ background: "#241A0E", border: "1px solid #3D2E1A", borderRadius: 12, padding: 20, marginBottom: 40, display: "flex", gap: 32, alignItems: "center" }}>
-        {[
-          { label: "3 iNFTs Owned", color: "#F5ECD7" },
-          { label: "0.031 ADI Earned Total", color: "#C9A84C" },
-          { label: "0G Chain \u00B7 Testnet", color: "#9A8060" },
-        ].map((stat, i) => (
-          <span key={i} style={{ fontFamily: "monospace", fontSize: 13, color: stat.color, paddingRight: 32, borderRight: i < 2 ? "1px solid #3D2E1A" : "none" }}>
-            {stat.label}
-          </span>
-        ))}
+      {/* MagicBento Header */}
+      <div style={{ marginBottom: 40 }}>
+        <MagicBento
+          textAutoHide={true}
+          enableStars={true}
+          enableSpotlight={true}
+          enableBorderGlow={true}
+          enableTilt={true}
+          enableMagnetism={true}
+          clickEffect={true}
+          glowColor="201, 168, 76"
+          spotlightRadius={300}
+          particleCount={10}
+        />
       </div>
 
       {/* iNFT Carousel */}
