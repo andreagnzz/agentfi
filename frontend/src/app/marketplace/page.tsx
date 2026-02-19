@@ -12,27 +12,31 @@ import {
 const spaceMono = Space_Mono({ subsets: ["latin"], weight: ["400", "700"] })
 const dmSans = DM_Sans({ subsets: ["latin"] })
 
-type Category = "All" | "DeFi" | "Risk" | "Yield"
+type Category = "All" | "DeFi" | "Risk" | "Yield" | "Custom"
 
 
 const CATEGORY_COLORS: Record<string, string> = {
   DeFi: "rgba(201,168,76,0.1)",
   Yield: "rgba(122,158,110,0.1)",
   Risk: "rgba(196,122,90,0.1)",
+  Custom: "rgba(138,110,46,0.15)",
 }
 const CATEGORY_TEXT: Record<string, string> = {
   DeFi: "#C9A84C",
   Yield: "#7A9E6E",
   Risk: "#C47A5A",
+  Custom: "#8A6E2E",
 }
 
 const AGENTS = [
-  { name: "Portfolio Analyzer", category: "DeFi" as const, desc: "Analyzes wallet composition and generates rebalancing recommendations", price: "0.01", rating: "4.9", queries: "1,247" },
-  { name: "Yield Optimizer", category: "Yield" as const, desc: "Scans 50+ protocols to find highest APY opportunities for your assets", price: "0.008", rating: "4.8", queries: "892" },
-  { name: "Risk Scorer", category: "Risk" as const, desc: "Real-time risk assessment of your DeFi positions with actionable alerts", price: "0.005", rating: "4.7", queries: "2,103" },
-  { name: "Cross-Chain Arbitrage", category: "DeFi" as const, desc: "Identifies arbitrage opportunities across 0G, ADI, and EVM chains", price: "0.015", rating: "4.6", queries: "445" },
-  { name: "Liquidity Manager", category: "Yield" as const, desc: "Manages LP positions automatically to maximize fee revenue", price: "0.012", rating: "4.5", queries: "334" },
-  { name: "Compliance Monitor", category: "Risk" as const, desc: "Monitors transactions for FATF Travel Rule compliance on ADI Chain", price: "0.006", rating: "4.8", queries: "678" },
+  { name: "Portfolio Analyzer", category: "DeFi" as const, desc: "Analyzes wallet composition and generates rebalancing recommendations", price: "0.01", rating: "4.9", queries: "1,247", custom: false },
+  { name: "Yield Optimizer", category: "Yield" as const, desc: "Scans 50+ protocols to find highest APY opportunities for your assets", price: "0.008", rating: "4.8", queries: "892", custom: false },
+  { name: "Risk Scorer", category: "Risk" as const, desc: "Real-time risk assessment of your DeFi positions with actionable alerts", price: "0.005", rating: "4.7", queries: "2,103", custom: false },
+  { name: "Cross-Chain Arbitrage", category: "DeFi" as const, desc: "Identifies arbitrage opportunities across 0G, ADI, and EVM chains", price: "0.015", rating: "4.6", queries: "445", custom: false },
+  { name: "Liquidity Manager", category: "Yield" as const, desc: "Manages LP positions automatically to maximize fee revenue", price: "0.012", rating: "4.5", queries: "334", custom: false },
+  { name: "Compliance Monitor", category: "Risk" as const, desc: "Monitors transactions for FATF Travel Rule compliance on ADI Chain", price: "0.006", rating: "4.8", queries: "678", custom: false },
+  { name: "My DeFi Watcher", category: "Custom" as const, desc: "Custom agent \u2014 monitors wallet activity and sends alerts on unusual movements.", price: "0.007", rating: "\u2014", queries: "New", custom: true },
+  { name: "Yield Scout v2", category: "Custom" as const, desc: "Custom agent \u2014 scans Aave and Compound for USDC yield above 8% APY.", price: "0.009", rating: "\u2014", queries: "New", custom: true },
 ]
 
 
@@ -142,7 +146,7 @@ export default function MarketplacePage() {
             <DropdownMenuLabel>Filter by Category</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              {(["All", "DeFi", "Yield", "Risk"] as Category[]).map(cat => (
+              {(["All", "DeFi", "Yield", "Risk", "Custom"] as Category[]).map(cat => (
                 <DropdownMenuItem
                   key={cat}
                   onClick={() => setActiveFilter(cat)}
@@ -162,12 +166,12 @@ export default function MarketplacePage() {
         {filtered.map(agent => (
           <div
             key={agent.name}
-            style={cardStyle}
+            style={{ ...cardStyle, border: `1px ${agent.custom ? "dashed" : "solid"} #3D2E1A` }}
             onMouseOver={e => (e.currentTarget.style.borderColor = "#5C4422")}
             onMouseOut={e => (e.currentTarget.style.borderColor = "#3D2E1A")}
           >
             {/* Top: name + category badge */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: agent.custom ? 4 : 12 }}>
               <span className={spaceMono.className} style={{ color: "#C9A84C", fontSize: 14, fontWeight: 700 }}>
                 {agent.name}
               </span>
@@ -181,11 +185,19 @@ export default function MarketplacePage() {
                   padding: "3px 10px",
                   borderRadius: 999,
                   fontWeight: 700,
+                  border: agent.custom ? "1px solid #5C4422" : "none",
                 }}
               >
                 {agent.category}
               </span>
             </div>
+
+            {/* Custom tag */}
+            {agent.custom && (
+              <div style={{ fontFamily: "monospace", fontSize: 10, color: "#8A6E2E", marginBottom: 12 }}>
+                {"\u2726"} Custom
+              </div>
+            )}
 
             {/* Description */}
             <div style={{
@@ -203,8 +215,12 @@ export default function MarketplacePage() {
 
             {/* Stats row */}
             <div className={spaceMono.className} style={{ display: "flex", gap: 12, marginBottom: 14 }}>
-              <span style={{ color: "#E8C97A", fontSize: 11 }}>{"\u2605"} {agent.rating}</span>
-              <span style={{ color: "#5C4A32", fontSize: 11 }}>{agent.queries} queries</span>
+              <span style={{ color: "#E8C97A", fontSize: 11 }}>
+                {agent.custom ? agent.rating : `${"\u2605"} ${agent.rating}`}
+              </span>
+              <span style={{ color: "#5C4A32", fontSize: 11 }}>
+                {agent.custom ? "New" : `${agent.queries} queries`}
+              </span>
             </div>
 
             {/* Divider */}
@@ -237,6 +253,39 @@ export default function MarketplacePage() {
             </div>
           </div>
         ))}
+
+        {/* Create Custom Agent CTA */}
+        {(activeFilter === "All" || activeFilter === "Custom") && (
+          <a href="/dashboard" style={{ textDecoration: "none" }}>
+            <div style={{
+              background: "#1A1208",
+              border: "1px dashed #5C4422",
+              borderRadius: 12,
+              padding: 24,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              minHeight: 220,
+              gap: 12,
+              cursor: "pointer",
+              transition: "border-color 0.2s, background 0.2s",
+            }}
+              onMouseOver={e => {
+                e.currentTarget.style.borderColor = "#C9A84C"
+                e.currentTarget.style.background = "#241A0E"
+              }}
+              onMouseOut={e => {
+                e.currentTarget.style.borderColor = "#5C4422"
+                e.currentTarget.style.background = "#1A1208"
+              }}
+            >
+              <span style={{ fontSize: 28, color: "#5C4422" }}>{"\u2726"}</span>
+              <p style={{ fontFamily: "monospace", color: "#C9A84C", fontSize: 14, fontWeight: "bold", margin: 0 }}>Create Custom Agent</p>
+              <p style={{ color: "#9A8060", fontSize: 12, margin: 0, textAlign: "center" }}>Deploy your own AI agent from a custom prompt</p>
+            </div>
+          </a>
+        )}
       </div>
 
       {/* ── Section 3: Own Your Agent ── */}
