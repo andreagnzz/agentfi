@@ -154,7 +154,7 @@ export default function HomePage() {
                 className="fade-in-up mb-8 flex gap-4"
                 style={{ animationDelay: "300ms" }}
               >
-                <div style={{ position: "relative", width: "fit-content" }}>
+                <a href="/marketplace" style={{ position: "relative", width: "fit-content", display: "block", textDecoration: "none" }}>
                   <PixelTransition
                     gridSize={8}
                     pixelColor="#C9A84C"
@@ -205,7 +205,7 @@ export default function HomePage() {
                       </div>
                     }
                   />
-                </div>
+                </a>
                 <GlareHover
                   width="180px"
                   height="44px"
