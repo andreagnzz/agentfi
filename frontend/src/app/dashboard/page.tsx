@@ -3,6 +3,11 @@ import { useState } from "react"
 import GlareHover from "@/components/GlareHover"
 import PixelTransition from "@/components/PixelTransition"
 import BlurText from "@/components/BlurText"
+import {
+  ContextMenu, ContextMenuContent, ContextMenuGroup, ContextMenuItem,
+  ContextMenuLabel, ContextMenuSeparator, ContextMenuShortcut, ContextMenuSub,
+  ContextMenuSubContent, ContextMenuSubTrigger, ContextMenuTrigger,
+} from "@/components/ui/context-menu"
 
 type Step = 1 | 2 | 3
 
@@ -22,6 +27,13 @@ const CHAINS = [
 ]
 
 const MODELS = ["gpt-4o-mini", "gpt-4o", "claude-3-haiku", "claude-3-sonnet"]
+
+const PROMPT_TEMPLATES = [
+  { label: "DeFi Analyzer", prompt: "You are a DeFi portfolio analyzer. Analyze the user's wallet positions, identify concentration risks, and suggest rebalancing strategies based on current market conditions." },
+  { label: "Yield Hunter", prompt: "You are a yield optimization agent. Scan DeFi protocols to find the highest APY opportunities for the user's assets, accounting for risk and gas costs." },
+  { label: "Risk Monitor", prompt: "You are a risk scoring agent. Monitor DeFi positions in real-time, compute risk scores from 1-10, and send alerts when thresholds are breached." },
+  { label: "Arbitrage Bot", prompt: "You are a cross-chain arbitrage agent. Identify price discrepancies across 0G, ADI Chain, and EVM networks and flag profitable opportunities." },
+]
 
 const inputStyle: React.CSSProperties = {
   background: "#1A1208",
@@ -54,6 +66,9 @@ const cardStyle: React.CSSProperties = {
 }
 
 export default function AgentCreationPage() {
+  const [mode, setMode] = useState<"template" | "custom">("template")
+  const [customPrompt, setCustomPrompt] = useState("")
+  const [customName, setCustomName] = useState("")
   const [step, setStep] = useState<Step>(1)
   const [form, setForm] = useState({
     name: "",
@@ -92,8 +107,120 @@ export default function AgentCreationPage() {
         <p style={{ color: "#9A8060", fontSize: 14, margin: 0 }}>Deploy a new autonomous AI agent as an iNFT</p>
       </div>
 
-      {/* Step indicator */}
-      <div style={{ display: "flex", alignItems: "center", gap: 0, marginBottom: 40 }}>
+      {/* Mode toggle */}
+      <div style={{ display: "flex", gap: 2, background: "#1A1208", border: "1px solid #3D2E1A", borderRadius: 10, padding: 4, marginBottom: 32, width: "fit-content" }}>
+        {(["template", "custom"] as const).map(m => (
+          <button key={m} onClick={() => setMode(m)} style={{
+            padding: "8px 20px", borderRadius: 8, border: "none", cursor: "pointer",
+            fontFamily: "monospace", fontSize: 12, fontWeight: "bold", letterSpacing: "0.08em",
+            background: mode === m ? "#C9A84C" : "transparent",
+            color: mode === m ? "#1A1208" : "#5C4A32",
+            transition: "all 0.2s",
+            textTransform: "uppercase",
+          }}>
+            {m === "template" ? "\u2B21 Template" : "\u2726 Custom Prompt"}
+          </button>
+        ))}
+      </div>
+
+      {/* Custom mode */}
+      {mode === "custom" && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          <div style={cardStyle}>
+            <h2 style={{ fontFamily: "monospace", color: "#C9A84C", fontSize: 14, margin: "0 0 6px", letterSpacing: "0.1em" }}>CUSTOM AGENT</h2>
+            <p style={{ color: "#9A8060", fontSize: 12, margin: "0 0 20px" }}>Right-click the prompt area for quick actions and templates</p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div>
+                <label style={labelStyle}>Agent Name</label>
+                <input
+                  style={inputStyle}
+                  placeholder="My Custom Agent"
+                  value={customName}
+                  onChange={e => setCustomName(e.target.value)}
+                  onFocus={e => (e.target.style.borderColor = "#C9A84C")}
+                  onBlur={e => (e.target.style.borderColor = "#3D2E1A")}
+                />
+              </div>
+
+              <div>
+                <label style={labelStyle}>Agent Prompt</label>
+                <ContextMenu>
+                  <ContextMenuTrigger asChild>
+                    <textarea
+                      style={{
+                        ...inputStyle,
+                        height: 240,
+                        resize: "vertical",
+                        lineHeight: 1.7,
+                        borderStyle: customPrompt ? "solid" : "dashed",
+                      }}
+                      placeholder={"Describe your agent's behavior, goals, and capabilities...\n\nRight-click for templates and quick actions."}
+                      value={customPrompt}
+                      onChange={e => setCustomPrompt(e.target.value)}
+                      onFocus={e => (e.target.style.borderColor = "#C9A84C")}
+                      onBlur={e => (e.target.style.borderColor = "#3D2E1A")}
+                    />
+                  </ContextMenuTrigger>
+                  <ContextMenuContent>
+                    <ContextMenuGroup>
+                      <ContextMenuLabel>Quick Actions</ContextMenuLabel>
+                      <ContextMenuItem onClick={() => setCustomPrompt("")}>
+                        Clear Prompt
+                        <ContextMenuShortcut>{"\u2318"}K</ContextMenuShortcut>
+                      </ContextMenuItem>
+                      <ContextMenuItem onClick={() => setCustomPrompt(prev => prev.trim() + "\n\nAlways respond in JSON format.")}>
+                        Append JSON output
+                      </ContextMenuItem>
+                      <ContextMenuItem onClick={() => setCustomPrompt(prev => prev.trim() + "\n\nKeep responses concise and actionable.")}>
+                        Append concise style
+                      </ContextMenuItem>
+                    </ContextMenuGroup>
+                    <ContextMenuSeparator />
+                    <ContextMenuGroup>
+                      <ContextMenuSub>
+                        <ContextMenuSubTrigger>Use Template</ContextMenuSubTrigger>
+                        <ContextMenuSubContent>
+                          <ContextMenuGroup>
+                            {PROMPT_TEMPLATES.map(t => (
+                              <ContextMenuItem key={t.label} onClick={() => setCustomPrompt(t.prompt)}>
+                                {t.label}
+                              </ContextMenuItem>
+                            ))}
+                          </ContextMenuGroup>
+                        </ContextMenuSubContent>
+                      </ContextMenuSub>
+                    </ContextMenuGroup>
+                    <ContextMenuSeparator />
+                    <ContextMenuGroup>
+                      <ContextMenuItem onClick={() => navigator.clipboard?.writeText(customPrompt)}>
+                        Copy Prompt
+                        <ContextMenuShortcut>{"\u2318"}C</ContextMenuShortcut>
+                      </ContextMenuItem>
+                    </ContextMenuGroup>
+                  </ContextMenuContent>
+                </ContextMenu>
+                <p style={{ color: "#5C4A32", fontFamily: "monospace", fontSize: 10, margin: "8px 0 0", letterSpacing: "0.08em" }}>
+                  {customPrompt.length} chars {"\u00B7"} right-click for templates
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Deploy button */}
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <PixelTransition
+              gridSize={7} pixelColor="#C9A84C" animationStepDuration={0.2} aspectRatio="0%"
+              style={{ width: 200, height: 44, borderRadius: 8, overflow: "hidden" }}
+              firstContent={<div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "#C9A84C", color: "#1A1208", fontFamily: "monospace", fontSize: 13, fontWeight: "bold", letterSpacing: "0.08em", cursor: "pointer" }}>{"\u26A1"} Deploy Custom Agent</div>}
+              secondContent={<div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "#E8C97A", color: "#1A1208", fontFamily: "monospace", fontSize: 13, fontWeight: "bold", letterSpacing: "0.08em", cursor: "pointer" }}>{"\u26A1"} Deploy Custom Agent</div>}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Template mode — Step indicator */}
+      {mode === "template" && <div style={{ display: "flex", alignItems: "center", gap: 0, marginBottom: 40 }}>
         {([1, 2, 3] as Step[]).map((s, i) => (
           <div key={s} style={{ display: "flex", alignItems: "center", flex: s < 3 ? 1 : "none" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }} onClick={() => s < step && setStep(s)}>
@@ -116,10 +243,10 @@ export default function AgentCreationPage() {
             {s < 3 && <div style={{ flex: 1, height: 1, background: step > s ? "#C9A84C" : "#3D2E1A", margin: "0 16px", transition: "background 0.3s" }} />}
           </div>
         ))}
-      </div>
+      </div>}
 
       {/* Step 1 — Agent Identity */}
-      {step === 1 && (
+      {mode === "template" && step === 1 && (
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           <div style={cardStyle}>
             <h2 style={{ fontFamily: "monospace", color: "#C9A84C", fontSize: 14, margin: "0 0 20px", letterSpacing: "0.1em" }}>
@@ -220,7 +347,7 @@ export default function AgentCreationPage() {
       )}
 
       {/* Step 2 — Capabilities & Chain */}
-      {step === 2 && (
+      {mode === "template" && step === 2 && (
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           <div style={cardStyle}>
             <h2 style={{ fontFamily: "monospace", color: "#C9A84C", fontSize: 14, margin: "0 0 20px", letterSpacing: "0.1em" }}>
@@ -289,7 +416,7 @@ export default function AgentCreationPage() {
       )}
 
       {/* Step 3 — Review & Deploy */}
-      {step === 3 && (
+      {mode === "template" && step === 3 && (
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           <div style={cardStyle}>
             <h2 style={{ fontFamily: "monospace", color: "#C9A84C", fontSize: 14, margin: "0 0 20px", letterSpacing: "0.1em" }}>
@@ -329,7 +456,7 @@ export default function AgentCreationPage() {
       )}
 
       {/* Navigation buttons */}
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 32 }}>
+      {mode === "template" && <div style={{ display: "flex", justifyContent: "space-between", marginTop: 32 }}>
         {step > 1 ? (
           <GlareHover width="130px" height="44px" background="#1A1208" borderRadius="8px" borderColor="#3D2E1A" glareColor="#C9A84C" glareOpacity={0.15} transitionDuration={500}>
             <button onClick={() => setStep(s => (s - 1) as Step)} style={{ background: "transparent", border: "none", color: "#9A8060", fontFamily: "monospace", fontSize: 13, cursor: "pointer", width: "100%", height: "100%" }}>
@@ -353,7 +480,7 @@ export default function AgentCreationPage() {
             secondContent={<div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "#E8C97A", color: "#1A1208", fontFamily: "monospace", fontSize: 13, fontWeight: "bold", letterSpacing: "0.08em", cursor: "pointer" }}>{"\u26A1"} Deploy Agent</div>}
           />
         )}
-      </div>
+      </div>}
 
     </main>
   )
