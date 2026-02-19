@@ -1,5 +1,5 @@
 "use client"
-import { useRef, useEffect, useState, useMemo, useId, FC, PointerEvent } from 'react'
+import { useRef, useEffect, useState, useId, FC, PointerEvent, useMemo } from 'react'
 import './CurvedLoop.css'
 
 interface CurvedLoopProps {
@@ -19,13 +19,18 @@ const CurvedLoop: FC<CurvedLoopProps> = ({
 }) => {
   const pathId = useId()
   const svgRef = useRef<SVGSVGElement>(null)
-  const offsetRef = useRef(0)
-  const rafRef = useRef<number>(0)
-  const draggingRef = useRef(false)
+  const textPathRef = useRef<SVGTextPathElement>(null)
+  const dragRef = useRef(false)
+  const dirRef = useRef(direction)
   const lastXRef = useRef(0)
-  const velocityRef = useRef(0)
 
   const [width, setWidth] = useState(1200)
+  const [textLength, setTextLength] = useState(0)
+  const [spacing, setSpacing] = useState(0)
+  const [ready, setReady] = useState(false)
+
+  // Keep dirRef in sync
+  useEffect(() => { dirRef.current = direction }, [direction])
 
   useEffect(() => {
     const update = () => {
@@ -45,54 +50,74 @@ const CurvedLoop: FC<CurvedLoopProps> = ({
     return `M -${width * 0.5} ${midY} Q ${width * 0.5} ${cy} ${width * 1.5} ${midY}`
   }, [width, curveAmount])
 
-  const repeatedText = useMemo(() => {
-    let result = ''
-    while (result.length < 600) result += marqueeText
-    return result
-  }, [marqueeText])
+  const text = marqueeText
+
+  const totalText = textLength
+    ? Array(Math.ceil(3600 / textLength) + 4)
+        .fill(text)
+        .join('')
+    : text
+
+  // Measure one repeat of the text on the path
+  useEffect(() => {
+    if (!textPathRef.current || !svgRef.current) return
+    const measure = () => {
+      const tp = textPathRef.current
+      if (!tp) return
+      const len = tp.getComputedTextLength()
+      if (len > 0 && totalText.length > text.length) {
+        const oneRepeat = (len / totalText.length) * text.length
+        setTextLength(text.length)
+        setSpacing(oneRepeat)
+        setReady(true)
+      }
+    }
+    // Delay to let the SVG render
+    const t = setTimeout(measure, 100)
+    return () => clearTimeout(t)
+  }, [text, totalText, width])
 
   useEffect(() => {
+    if (!spacing || !ready) return
+    let animationId: number
+    let currentOffset = -spacing
+
     const step = () => {
-      if (!draggingRef.current) {
-        const dir = direction === 'left' ? -1 : 1
-        offsetRef.current += speed * dir * 0.5
-        velocityRef.current *= 0.95
-        offsetRef.current += velocityRef.current
+      if (!dragRef.current && textPathRef.current) {
+        const delta = dirRef.current === 'right' ? speed : -speed
+        currentOffset += delta
+
+        // Infinite wrap — reset seamlessly when crossing boundary
+        if (currentOffset <= -spacing) currentOffset += spacing
+        if (currentOffset > 0) currentOffset -= spacing
+
+        textPathRef.current.setAttribute('startOffset', currentOffset + 'px')
       }
-
-      if (offsetRef.current > 100) offsetRef.current -= 100
-      if (offsetRef.current < -100) offsetRef.current += 100
-
-      const textPath = svgRef.current?.querySelector('textPath')
-      if (textPath) {
-        textPath.setAttribute('startOffset', `${offsetRef.current}%`)
-      }
-
-      rafRef.current = requestAnimationFrame(step)
+      animationId = requestAnimationFrame(step)
     }
 
-    rafRef.current = requestAnimationFrame(step)
-    return () => cancelAnimationFrame(rafRef.current)
-  }, [speed, direction])
+    animationId = requestAnimationFrame(step)
+    return () => cancelAnimationFrame(animationId)
+  }, [spacing, speed, ready])
 
   const onPointerDown = (e: PointerEvent) => {
-    draggingRef.current = true
+    dragRef.current = true
     lastXRef.current = e.clientX
-    velocityRef.current = 0
     ;(e.target as Element).setPointerCapture(e.pointerId)
   }
 
   const onPointerMove = (e: PointerEvent) => {
-    if (!draggingRef.current) return
+    if (!dragRef.current || !textPathRef.current) return
     const dx = e.clientX - lastXRef.current
-    const pct = (dx / width) * 100
-    offsetRef.current += pct
-    velocityRef.current = pct * 0.5
+    textPathRef.current.setAttribute(
+      'startOffset',
+      (parseFloat(textPathRef.current.getAttribute('startOffset') || '0') + dx) + 'px'
+    )
     lastXRef.current = e.clientX
   }
 
   const onPointerUp = () => {
-    draggingRef.current = false
+    dragRef.current = false
   }
 
   return (
@@ -114,8 +139,8 @@ const CurvedLoop: FC<CurvedLoopProps> = ({
           <path id={pathId} d={pathD} fill="none" />
         </defs>
         <text className={className}>
-          <textPath href={`#${pathId}`} startOffset="0%">
-            {repeatedText}
+          <textPath ref={textPathRef} href={`#${pathId}`} startOffset="0">
+            {totalText}
           </textPath>
         </text>
       </svg>
