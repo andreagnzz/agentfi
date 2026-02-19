@@ -1,0 +1,12 @@
+{
+  "name": "agentfi-hedera-scripts",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "register": "node register-agents.js"
+  },
+  "dependencies": {
+    "@hashgraphonline/standards-sdk": "^0.1.145",
+    "dotenv": "^16.4.5"
+  }
+}
