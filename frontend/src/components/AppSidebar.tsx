@@ -1,6 +1,5 @@
 "use client"
-import { Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupItem, SidebarFooter, useSidebar } from "@/components/ui/sidebar"
-import WalletConnect from "./WalletConnect"
+import { Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupItem, useSidebar } from "@/components/ui/sidebar"
 
 const NAV = [
   {
@@ -51,12 +50,6 @@ export default function AppSidebar() {
           </SidebarGroup>
         ))}
       </SidebarContent>
-
-      <SidebarFooter>
-        <div style={{ animation: open ? "fadeSlideIn 0.3s ease 0.3s forwards" : "none", opacity: 0 }}>
-          <WalletConnect />
-        </div>
-      </SidebarFooter>
     </Sidebar>
   )
 }
