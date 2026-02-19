@@ -55,10 +55,7 @@ export default function LogoCarousel() {
                 />
               </div>
               {/* Logo fixed in center */}
-              <div
-                className="relative z-10 flex items-center justify-center rounded-xl"
-                style={{ background: "#241A0E", border: "1px solid #3D2E1A", width: 72, height: 72 }}
-              >
+              <div className="relative z-10 flex items-center justify-center" style={{ width: 72, height: 72 }}>
                 <Logo />
               </div>
             </div>
