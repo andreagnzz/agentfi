@@ -1,11 +1,6 @@
 "use client"
-import React, { useEffect } from "react"
-import {
-  motion,
-  useAnimation,
-  useMotionValue,
-} from "motion/react"
-import "./CircularText.css"
+import { useEffect, FC } from "react"
+import { motion, useAnimation, useMotionValue, MotionValue } from "motion/react"
 
 interface CircularTextProps {
   text: string
@@ -14,81 +9,83 @@ interface CircularTextProps {
   className?: string
 }
 
-function startSpin(
-  controls: ReturnType<typeof useAnimation>,
-  duration: number,
-  startFrom: number
-) {
-  controls.start({
-    rotate: startFrom + 360,
-    transition: {
-      ease: "linear",
-      duration,
-      repeat: Infinity,
-      repeatType: "loop" as const,
-    },
-  })
-}
+const getTransition = (duration: number, from: number) => ({
+  rotate: {
+    from,
+    to: from + 360,
+    ease: "linear" as const,
+    duration,
+    type: "tween" as const,
+    repeat: Infinity,
+  },
+  scale: { type: "spring" as const, damping: 20, stiffness: 300 },
+})
 
-const CircularText: React.FC<CircularTextProps> = ({
+const CircularText: FC<CircularTextProps> = ({
   text,
   spinDuration = 20,
   onHover = "speedUp",
   className = "",
 }) => {
+  const letters = Array.from(text)
   const controls = useAnimation()
-  const rotationValue = useMotionValue(0)
+  const rotation: MotionValue<number> = useMotionValue(0)
 
   useEffect(() => {
-    startSpin(controls, spinDuration, 0)
-  }, [controls, spinDuration])
+    const start = rotation.get()
+    controls.start({ rotate: start + 360, scale: 1, transition: getTransition(spinDuration, start) })
+  }, [spinDuration, text, controls])
 
   const handleHoverStart = () => {
-    const current = rotationValue.get()
-    switch (onHover) {
-      case "slowDown":
-        startSpin(controls, spinDuration * 2, current)
-        break
-      case "speedUp":
-        startSpin(controls, spinDuration / 2, current)
-        break
-      case "pause":
-        controls.stop()
-        break
-      case "goBonkers":
-        startSpin(controls, spinDuration / 5, current)
-        break
-      default:
-        startSpin(controls, spinDuration, current)
-    }
+    const start = rotation.get()
+    const config =
+      onHover === "slowDown"   ? getTransition(spinDuration * 2, start) :
+      onHover === "speedUp"    ? getTransition(spinDuration / 4, start) :
+      onHover === "goBonkers"  ? getTransition(spinDuration / 20, start) :
+      { rotate: { type: "spring" as const, damping: 20, stiffness: 300 }, scale: { type: "spring" as const, damping: 20, stiffness: 300 } }
+    const scale = onHover === "goBonkers" ? 0.8 : 1
+    controls.start({ rotate: start + 360, scale, transition: config })
   }
 
   const handleHoverEnd = () => {
-    const current = rotationValue.get()
-    startSpin(controls, spinDuration, current)
+    const start = rotation.get()
+    controls.start({ rotate: start + 360, scale: 1, transition: getTransition(spinDuration, start) })
   }
-
-  const characters = text.split("")
-  const degreesPerChar = 360 / characters.length
 
   return (
     <motion.div
-      className={`circular-text ${className}`}
+      className={className}
+      style={{ rotate: rotation, position: "relative", width: 140, height: 140, display: "flex", alignItems: "center", justifyContent: "center" }}
+      initial={{ rotate: 0 }}
       animate={controls}
-      style={{ rotate: rotationValue }}
-      onHoverStart={handleHoverStart}
-      onHoverEnd={handleHoverEnd}
+      onMouseEnter={handleHoverStart}
+      onMouseLeave={handleHoverEnd}
     >
-      {characters.map((char, i) => (
-        <span
-          key={`${char}-${i}`}
-          style={{
-            transform: `rotate(${degreesPerChar * i}deg)`,
-          }}
-        >
-          {char}
-        </span>
-      ))}
+      {letters.map((letter, i) => {
+        const rotationDeg = (360 / letters.length) * i
+        const transform = `rotateZ(${rotationDeg}deg) translateY(-60px)`
+        return (
+          <span
+            key={i}
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              fontSize: 10,
+              fontFamily: "monospace",
+              letterSpacing: "0.12em",
+              color: "#C9A84C",
+              opacity: 0.75,
+              transform,
+              transformOrigin: "0 0",
+              marginTop: -6,
+              marginLeft: -3,
+            }}
+          >
+            {letter}
+          </span>
+        )
+      })}
     </motion.div>
   )
 }

@@ -27,42 +27,39 @@ const ADILogo = () => (
 )
 
 const CHAINS = [
-  { id: "og",     Logo: OGLogo,     name: "0G Chain",  role: "Agent Ownership",    text: "iNFT · ERC-7857 · 0G CHAIN · AGENT · ",        spinDuration: 16, onHover: "speedUp"   as const },
-  { id: "hedera", Logo: HederaLogo, name: "Hedera",    role: "Agent Execution",    text: "HEDERA · OPENCLAW · HCS-10 · AGENT KIT · ",     spinDuration: 20, onHover: "slowDown"  as const },
-  { id: "adi",    Logo: ADILogo,    name: "ADI Chain", role: "Compliant Payments", text: "ADI CHAIN · PAYMENTS · ZKSTACK · FATF · ",       spinDuration: 24, onHover: "goBonkers" as const },
+  { id: "og",     Logo: OGLogo,     name: "0G Chain",  role: "Agent Ownership",    text: "iNFT · ERC-7857 · 0G CHAIN · AGENT · ",    spinDuration: 16, onHover: "speedUp"   as const },
+  { id: "hedera", Logo: HederaLogo, name: "Hedera",    role: "Agent Execution",    text: "HEDERA · OPENCLAW · HCS-10 · AGENT KIT · ", spinDuration: 20, onHover: "slowDown"  as const },
+  { id: "adi",    Logo: ADILogo,    name: "ADI Chain", role: "Compliant Payments", text: "ADI CHAIN · PAYMENTS · ZKSTACK · FATF · ",  spinDuration: 24, onHover: "goBonkers" as const },
 ]
 
 export default function LogoCarousel() {
   return (
-    <div className="flex items-center justify-center gap-16 flex-wrap">
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 64, flexWrap: "wrap" }}>
       {CHAINS.map((chain, i) => {
         const Logo = chain.Logo
         return (
           <motion.div
             key={chain.id}
-            className="flex flex-col items-center gap-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.15, duration: 0.5 }}
+            style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}
           >
-            <div className="relative flex items-center justify-center" style={{ width: 140, height: 140 }}>
-              {/* Spinning text ring */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <CircularText
-                  text={chain.text}
-                  spinDuration={chain.spinDuration}
-                  onHover={chain.onHover}
-                />
+            {/* Spinning ring + logo */}
+            <div style={{ position: "relative", width: 140, height: 140, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              {/* CircularText behind */}
+              <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <CircularText text={chain.text} spinDuration={chain.spinDuration} onHover={chain.onHover} />
               </div>
-              {/* Logo fixed in center */}
-              <div className="relative z-10 flex items-center justify-center" style={{ width: 72, height: 72 }}>
+              {/* Logo floating in center */}
+              <div style={{ position: "relative", zIndex: 10, display: "flex", alignItems: "center", justifyContent: "center", width: 72, height: 72 }}>
                 <Logo />
               </div>
             </div>
-            <p className="text-xs font-mono tracking-widest uppercase" style={{ color: "#C9A84C" }}>
+            <p style={{ color: "#C9A84C", fontFamily: "monospace", fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase" }}>
               {chain.name}
             </p>
-            <p className="text-xs" style={{ color: "#9A8060" }}>
+            <p style={{ color: "#9A8060", fontSize: 12 }}>
               {chain.role}
             </p>
           </motion.div>
