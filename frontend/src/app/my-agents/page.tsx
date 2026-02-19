@@ -3,7 +3,7 @@ import { useState, useEffect } from "react"
 import TiltedCard from "@/components/TiltedCard"
 import GlareHover from "@/components/GlareHover"
 import AnimatedContent from "@/components/AnimatedContent"
-import Folder from "@/components/Folder"
+import SpotlightCard from "@/components/SpotlightCard"
 
 const AGENTS = [
   { id: "#0042", name: "Portfolio Analyzer", model: "gpt-4o-mini", capabilities: "DeFi Analysis", minted: "Feb 18, 2026", queries: "47", earned: "0.012 ADI", chain: "0G Chain", status: "ACTIVE" },
@@ -72,56 +72,46 @@ export default function MyAgentsPage() {
         <p style={{ color: "#9A8060", fontSize: 14, marginTop: 8 }}>Your iNFT collection on 0G Chain</p>
       </div>
 
-      {/* Folder stats — replaces MagicBento */}
-      <div style={{ marginBottom: 48 }}>
-        <h2 style={{ fontFamily: "monospace", color: "#C9A84C", fontSize: 13, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 24 }}>
-          Collection Overview
-        </h2>
-        <div style={{ display: "flex", gap: 48, alignItems: "flex-end", flexWrap: "wrap" }}>
+      {/* SpotlightCard stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 48 }}>
 
-          {/* Folder 1 — iNFT Count */}
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
-            <Folder
-              color="#C9A84C"
-              size={1.4}
-              items={[
-                <div key="f1p1" style={{ color: "#1A1208", fontFamily: "monospace", fontSize: 10, fontWeight: "bold", textAlign: "center" }}>3 iNFTs<br/>Owned</div>,
-                <div key="f1p2" style={{ color: "#1A1208", fontFamily: "monospace", fontSize: 9, textAlign: "center" }}>0G Chain<br/>Testnet</div>,
-                <div key="f1p3" style={{ color: "#1A1208", fontFamily: "monospace", fontSize: 9, textAlign: "center" }}>ERC-7857<br/>Standard</div>,
-              ]}
-            />
-            <p style={{ color: "#C9A84C", fontFamily: "monospace", fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", margin: 0 }}>Collection</p>
+        <SpotlightCard spotlightColor="rgba(201, 168, 76, 0.15)" style={{ padding: 24 }}>
+          <p style={{ color: "#5C4A32", fontFamily: "monospace", fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", margin: "0 0 8px" }}>Collection</p>
+          <h2 style={{ color: "#F5ECD7", fontFamily: "monospace", fontSize: 28, margin: "0 0 4px", fontWeight: "bold" }}>3 iNFTs</h2>
+          <p style={{ color: "#9A8060", fontSize: 13, margin: 0 }}>Owned on 0G Chain</p>
+          <div style={{ marginTop: 16, display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {["ERC-7857", "0G Chain", "Testnet"].map(tag => (
+              <span key={tag} style={{ background: "#1A1208", border: "1px solid #3D2E1A", borderRadius: 6, padding: "2px 10px", fontFamily: "monospace", fontSize: 10, color: "#5C4A32" }}>{tag}</span>
+            ))}
           </div>
+        </SpotlightCard>
 
-          {/* Folder 2 — ADI Earned */}
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
-            <Folder
-              color="#8A6E2E"
-              size={1.4}
-              items={[
-                <div key="f2p1" style={{ color: "#1A1208", fontFamily: "monospace", fontSize: 10, fontWeight: "bold", textAlign: "center" }}>0.031 ADI<br/>Earned</div>,
-                <div key="f2p2" style={{ color: "#1A1208", fontFamily: "monospace", fontSize: 9, textAlign: "center" }}>47 Queries<br/>Total</div>,
-                <div key="f2p3" style={{ color: "#1A1208", fontFamily: "monospace", fontSize: 9, textAlign: "center" }}>ADI Chain<br/>Payments</div>,
-              ]}
-            />
-            <p style={{ color: "#C9A84C", fontFamily: "monospace", fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", margin: 0 }}>Earnings</p>
+        <SpotlightCard spotlightColor="rgba(201, 168, 76, 0.15)" style={{ padding: 24 }}>
+          <p style={{ color: "#5C4A32", fontFamily: "monospace", fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", margin: "0 0 8px" }}>Earnings</p>
+          <h2 style={{ color: "#C9A84C", fontFamily: "monospace", fontSize: 28, margin: "0 0 4px", fontWeight: "bold" }}>0.031 ADI</h2>
+          <p style={{ color: "#9A8060", fontSize: 13, margin: 0 }}>Total earned across all agents</p>
+          <div style={{ marginTop: 16 }}>
+            <div style={{ height: 4, background: "#1A1208", borderRadius: 2, overflow: "hidden" }}>
+              <div style={{ height: "100%", width: "62%", background: "#C9A84C", borderRadius: 2 }} />
+            </div>
+            <p style={{ color: "#5C4A32", fontFamily: "monospace", fontSize: 10, margin: "6px 0 0" }}>62% of monthly target</p>
           </div>
+        </SpotlightCard>
 
-          {/* Folder 3 — Network */}
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
-            <Folder
-              color="#5C4422"
-              size={1.4}
-              items={[
-                <div key="f3p1" style={{ color: "#F5ECD7", fontFamily: "monospace", fontSize: 10, fontWeight: "bold", textAlign: "center" }}>0G Chain<br/>Testnet</div>,
-                <div key="f3p2" style={{ color: "#F5ECD7", fontFamily: "monospace", fontSize: 9, textAlign: "center" }}>Hedera<br/>HCS-10</div>,
-                <div key="f3p3" style={{ color: "#F5ECD7", fontFamily: "monospace", fontSize: 9, textAlign: "center" }}>ADI Chain<br/>L2</div>,
-              ]}
-            />
-            <p style={{ color: "#C9A84C", fontFamily: "monospace", fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", margin: 0 }}>Networks</p>
+        <SpotlightCard spotlightColor="rgba(201, 168, 76, 0.15)" style={{ padding: 24 }}>
+          <p style={{ color: "#5C4A32", fontFamily: "monospace", fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", margin: "0 0 8px" }}>Networks</p>
+          <h2 style={{ color: "#F5ECD7", fontFamily: "monospace", fontSize: 28, margin: "0 0 4px", fontWeight: "bold" }}>3 Chains</h2>
+          <p style={{ color: "#9A8060", fontSize: 13, margin: 0 }}>Multi-chain agent infrastructure</p>
+          <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 4 }}>
+            {[{ name: "0G Chain", color: "#C9A84C" }, { name: "Hedera", color: "#7A9E6E" }, { name: "ADI Chain", color: "#9A8060" }].map(c => (
+              <div key={c.name} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <div style={{ width: 6, height: 6, borderRadius: "50%", background: c.color }} />
+                <span style={{ fontFamily: "monospace", fontSize: 11, color: c.color }}>{c.name}</span>
+              </div>
+            ))}
           </div>
+        </SpotlightCard>
 
-        </div>
       </div>
 
       {/* 3 TiltedCards side by side */}
