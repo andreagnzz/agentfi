@@ -5,6 +5,7 @@ import dynamic from "next/dynamic"
 import { Space_Mono, DM_Sans } from "next/font/google"
 import PixelTransition from "@/components/PixelTransition"
 import GlareHover from "@/components/GlareHover"
+import { Button } from "@/components/ui/button"
 
 const LogoCarousel = dynamic(() => import("@/components/LogoCarousel"), { ssr: false })
 const CurvedLoop = dynamic(() => import("@/components/CurvedLoop"), { ssr: false })
@@ -154,58 +155,33 @@ export default function HomePage() {
                 className="fade-in-up mb-8 flex gap-4"
                 style={{ animationDelay: "300ms" }}
               >
-                <a href="/marketplace" style={{ position: "relative", width: "fit-content", display: "block", textDecoration: "none" }}>
-                  <PixelTransition
-                    gridSize={8}
-                    pixelColor="#C9A84C"
-                    animationStepDuration={0.25}
-                    aspectRatio="0%"
-                    style={{
-                      width: 180,
-                      height: 44,
-                      borderRadius: 8,
-                      overflow: "hidden",
-                    }}
-                    firstContent={
-                      <div style={{
-                        position: "absolute",
-                        inset: 0,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        background: "#C9A84C",
-                        color: "#1A1208",
-                        fontFamily: "monospace",
-                        fontSize: 13,
-                        fontWeight: "bold",
-                        letterSpacing: "0.1em",
-                        borderRadius: 8,
-                        cursor: "pointer",
-                      }}>
+                <PixelTransition
+                  gridSize={8}
+                  pixelColor="#C9A84C"
+                  animationStepDuration={0.25}
+                  aspectRatio="0%"
+                  style={{ width: 180, height: 44, borderRadius: 8, overflow: "hidden" }}
+                  firstContent={
+                    <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <Button
+                        style={{ width: "100%", height: "100%", background: "#C9A84C", color: "#1A1208", fontFamily: "monospace", fontSize: 13, fontWeight: "bold", letterSpacing: "0.1em", borderRadius: 8, border: "none", cursor: "pointer" }}
+                        onClick={() => window.location.href = "/marketplace"}
+                      >
                         Enter Marketplace
-                      </div>
-                    }
-                    secondContent={
-                      <div style={{
-                        position: "absolute",
-                        inset: 0,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        background: "#E8C97A",
-                        color: "#1A1208",
-                        fontFamily: "monospace",
-                        fontSize: 13,
-                        fontWeight: "bold",
-                        letterSpacing: "0.1em",
-                        borderRadius: 8,
-                        cursor: "pointer",
-                      }}>
+                      </Button>
+                    </div>
+                  }
+                  secondContent={
+                    <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <Button
+                        style={{ width: "100%", height: "100%", background: "#E8C97A", color: "#1A1208", fontFamily: "monospace", fontSize: 13, fontWeight: "bold", letterSpacing: "0.1em", borderRadius: 8, border: "none", cursor: "pointer" }}
+                        onClick={() => window.location.href = "/marketplace"}
+                      >
                         Enter Marketplace
-                      </div>
-                    }
-                  />
-                </a>
+                      </Button>
+                    </div>
+                  }
+                />
                 <GlareHover
                   width="180px"
                   height="44px"
@@ -218,24 +194,12 @@ export default function HomePage() {
                   glareSize={250}
                   transitionDuration={600}
                 >
-                  <a
-                    href="/dashboard"
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      width: "100%",
-                      height: "100%",
-                      color: "#C9A84C",
-                      fontFamily: "monospace",
-                      fontSize: 13,
-                      fontWeight: "bold",
-                      letterSpacing: "0.1em",
-                      textDecoration: "none",
-                    }}
+                  <Button
+                    style={{ width: "100%", height: "100%", background: "transparent", color: "#C9A84C", fontFamily: "monospace", fontSize: 13, fontWeight: "bold", letterSpacing: "0.1em", border: "none", cursor: "pointer" }}
+                    onClick={() => window.location.href = "/dashboard"}
                   >
                     View Dashboard
-                  </a>
+                  </Button>
                 </GlareHover>
               </div>
 
