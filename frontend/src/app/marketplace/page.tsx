@@ -153,10 +153,15 @@ export default function MarketplacePage() {
                 <DropdownMenuItem
                   key={cat}
                   onClick={() => setActiveFilter(cat)}
-                  style={{ color: activeFilter === cat ? "#C9A84C" : "#F5ECD7" }}
                 >
-                  {activeFilter === cat && <span style={{ marginRight: 8 }}>{"\u2713"}</span>}
-                  {cat === "All" ? "All Categories" : cat}
+                  <span style={{ display: "flex", alignItems: "center", gap: 8, width: "100%" }}>
+                    <span style={{ width: 16, color: "#C9A84C", fontSize: 12, flexShrink: 0 }}>
+                      {activeFilter === cat ? "\u2713" : ""}
+                    </span>
+                    <span style={{ color: activeFilter === cat ? "#C9A84C" : "#F5ECD7" }}>
+                      {cat === "All" ? "All Categories" : cat}
+                    </span>
+                  </span>
                 </DropdownMenuItem>
               ))}
             </DropdownMenuGroup>
