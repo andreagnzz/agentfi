@@ -1,5 +1,6 @@
 "use client"
 import React, { useLayoutEffect, useRef, useState } from "react"
+import Link from "next/link"
 import { gsap } from "gsap"
 import { GoArrowUpRight } from "react-icons/go"
 import "./CardNav.css"
@@ -98,7 +99,9 @@ const CardNav: React.FC = () => {
             <div className="hamburger-line" />
           </div>
 
-          <div className="logo-container">AgentFi</div>
+          <Link href="/" className="logo-container" style={{ textDecoration: "none", color: "#C9A84C", fontFamily: "monospace", fontSize: 20, fontWeight: "bold", letterSpacing: "0.05em" }}>
+            AgentFi
+          </Link>
 
           <WalletConnect />
         </div>
