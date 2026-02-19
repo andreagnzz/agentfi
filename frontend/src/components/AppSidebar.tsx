@@ -1,7 +1,6 @@
 "use client"
-import { Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupItem, SidebarFooter } from "@/components/ui/sidebar"
+import { Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupItem, SidebarFooter, useSidebar } from "@/components/ui/sidebar"
 import WalletConnect from "./WalletConnect"
-import FadeContent from "./FadeContent"
 
 const NAV = [
   {
@@ -24,6 +23,8 @@ const NAV = [
 ]
 
 export default function AppSidebar() {
+  const { open } = useSidebar()
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -34,21 +35,28 @@ export default function AppSidebar() {
         {NAV.map((group, gi) => (
           <SidebarGroup key={group.label} label={group.label}>
             {group.links.map((link, li) => (
-              <FadeContent key={link.href} delay={100 + gi * 80 + li * 60} duration={300} blur>
+              <div
+                key={link.href}
+                style={{
+                  animation: open ? "fadeSlideIn 0.3s ease forwards" : "none",
+                  animationDelay: `${(gi * 4 + li) * 50}ms`,
+                  opacity: 0,
+                }}
+              >
                 <SidebarGroupItem href={link.href}>
                   <span style={{ color: "#C9A84C", fontSize: 14, width: 20, textAlign: "center" }}>{link.icon}</span>
                   {link.label}
                 </SidebarGroupItem>
-              </FadeContent>
+              </div>
             ))}
           </SidebarGroup>
         ))}
       </SidebarContent>
 
       <SidebarFooter>
-        <FadeContent delay={400} duration={300}>
+        <div style={{ animation: open ? "fadeSlideIn 0.3s ease 0.3s forwards" : "none", opacity: 0 }}>
           <WalletConnect />
-        </FadeContent>
+        </div>
       </SidebarFooter>
     </Sidebar>
   )
