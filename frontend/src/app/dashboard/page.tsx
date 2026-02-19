@@ -3,6 +3,7 @@ import { useState } from "react"
 import GlareHover from "@/components/GlareHover"
 import PixelTransition from "@/components/PixelTransition"
 import BlurText from "@/components/BlurText"
+import FadeContent from "@/components/FadeContent"
 import {
   ContextMenu, ContextMenuContent, ContextMenuGroup, ContextMenuItem,
   ContextMenuLabel, ContextMenuSeparator, ContextMenuShortcut, ContextMenuSub,
@@ -67,6 +68,7 @@ const cardStyle: React.CSSProperties = {
 
 export default function AgentCreationPage() {
   const [mode, setMode] = useState<"template" | "custom">("template")
+  const [modeKey, setModeKey] = useState(0)
   const [customPrompt, setCustomPrompt] = useState("")
   const [customName, setCustomName] = useState("")
   const [step, setStep] = useState<Step>(1)
@@ -110,7 +112,7 @@ export default function AgentCreationPage() {
       {/* Mode toggle */}
       <div style={{ display: "flex", gap: 2, background: "#1A1208", border: "1px solid #3D2E1A", borderRadius: 10, padding: 4, marginBottom: 32, width: "fit-content" }}>
         {(["template", "custom"] as const).map(m => (
-          <button key={m} onClick={() => setMode(m)} style={{
+          <button key={m} onClick={() => { setMode(m); setModeKey(k => k + 1) }} style={{
             padding: "8px 20px", borderRadius: 8, border: "none", cursor: "pointer",
             fontFamily: "monospace", fontSize: 12, fontWeight: "bold", letterSpacing: "0.08em",
             background: mode === m ? "#C9A84C" : "transparent",
@@ -122,6 +124,15 @@ export default function AgentCreationPage() {
           </button>
         ))}
       </div>
+
+      <FadeContent
+        key={modeKey}
+        blur={true}
+        duration={400}
+        ease="power2.out"
+        delay={0}
+        style={{ visibility: "hidden" }}
+      >
 
       {/* Custom mode */}
       {mode === "custom" && (
@@ -481,6 +492,8 @@ export default function AgentCreationPage() {
           />
         )}
       </div>}
+
+      </FadeContent>
 
     </main>
   )
