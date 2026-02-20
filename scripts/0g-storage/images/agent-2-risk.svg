@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a0808"/>
+      <stop offset="100%" stop-color="#4a0a0a"/>
+    </linearGradient>
+    <linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#22c55e"/>
+      <stop offset="50%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#ef4444"/>
+    </linearGradient>
+    <filter id="glow2"><feGaussianBlur stdDeviation="3" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <!-- Background -->
+  <rect width="500" height="500" fill="url(#bg2)" rx="20"/>
+  <!-- Grid -->
+  <g stroke="#3a1515" stroke-width="0.5" opacity="0.3">
+    <line x1="0" y1="0" x2="0" y2="500"/><line x1="0" y1="0" x2="500" y2="0"/><line x1="25" y1="0" x2="25" y2="500"/><line x1="0" y1="25" x2="500" y2="25"/><line x1="50" y1="0" x2="50" y2="500"/><line x1="0" y1="50" x2="500" y2="50"/><line x1="75" y1="0" x2="75" y2="500"/><line x1="0" y1="75" x2="500" y2="75"/><line x1="100" y1="0" x2="100" y2="500"/><line x1="0" y1="100" x2="500" y2="100"/><line x1="125" y1="0" x2="125" y2="500"/><line x1="0" y1="125" x2="500" y2="125"/><line x1="150" y1="0" x2="150" y2="500"/><line x1="0" y1="150" x2="500" y2="150"/><line x1="175" y1="0" x2="175" y2="500"/><line x1="0" y1="175" x2="500" y2="175"/><line x1="200" y1="0" x2="200" y2="500"/><line x1="0" y1="200" x2="500" y2="200"/><line x1="225" y1="0" x2="225" y2="500"/><line x1="0" y1="225" x2="500" y2="225"/><line x1="250" y1="0" x2="250" y2="500"/><line x1="0" y1="250" x2="500" y2="250"/><line x1="275" y1="0" x2="275" y2="500"/><line x1="0" y1="275" x2="500" y2="275"/><line x1="300" y1="0" x2="300" y2="500"/><line x1="0" y1="300" x2="500" y2="300"/><line x1="325" y1="0" x2="325" y2="500"/><line x1="0" y1="325" x2="500" y2="325"/><line x1="350" y1="0" x2="350" y2="500"/><line x1="0" y1="350" x2="500" y2="350"/><line x1="375" y1="0" x2="375" y2="500"/><line x1="0" y1="375" x2="500" y2="375"/><line x1="400" y1="0" x2="400" y2="500"/><line x1="0" y1="400" x2="500" y2="400"/><line x1="425" y1="0" x2="425" y2="500"/><line x1="0" y1="425" x2="500" y2="425"/><line x1="450" y1="0" x2="450" y2="500"/><line x1="0" y1="450" x2="500" y2="450"/><line x1="475" y1="0" x2="475" y2="500"/><line x1="0" y1="475" x2="500" y2="475"/>
+  </g>
+  <!-- Shield outline -->
+  <g transform="translate(250,195)" filter="url(#glow2)">
+    <path d="M0,-120 L80,-85 L85,10 Q85,80 0,120 Q-85,80 -85,10 L-80,-85 Z"
+      fill="none" stroke="#f59e0b" stroke-width="2" opacity="0.4"/>
+    <path d="M0,-100 L65,-70 L68,8 Q68,65 0,98 Q-68,65 -68,8 L-65,-70 Z"
+      fill="#1a0808" fill-opacity="0.5" stroke="#f59e0b" stroke-width="1" opacity="0.3"/>
+  </g>
+  <!-- Risk gauge (semicircle) -->
+  <g transform="translate(250,240)" filter="url(#glow2)">
+    <!-- Gauge track -->
+    <path d="M-100,0 A100,100 0 0,1 100,0" fill="none" stroke="#2a1515" stroke-width="25" stroke-linecap="round"/>
+    <!-- Green zone -->
+    <path d="M-100,0 A100,100 0 0,1 -50,-86.6" fill="none" stroke="#22c55e" stroke-width="23" stroke-linecap="round" opacity="0.8"/>
+    <!-- Yellow zone -->
+    <path d="M-50,-86.6 A100,100 0 0,1 50,-86.6" fill="none" stroke="#f59e0b" stroke-width="23" stroke-linecap="round" opacity="0.8"/>
+    <!-- Red zone -->
+    <path d="M50,-86.6 A100,100 0 0,1 100,0" fill="none" stroke="#ef4444" stroke-width="23" stroke-linecap="round" opacity="0.8"/>
+    <!-- Needle (pointing to yellow/moderate) -->
+    <line x1="0" y1="5" x2="-15" y2="-80" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="0" cy="0" r="8" fill="#f59e0b" stroke="#ffffff" stroke-width="2"/>
+    <!-- Labels -->
+    <text x="-110" y="20" text-anchor="middle" fill="#22c55e" font-family="monospace" font-size="10">LOW</text>
+    <text x="0" y="-108" text-anchor="middle" fill="#f59e0b" font-family="monospace" font-size="10">MED</text>
+    <text x="110" y="20" text-anchor="middle" fill="#ef4444" font-family="monospace" font-size="10">HIGH</text>
+    <!-- Score display -->
+    <text x="0" y="45" text-anchor="middle" fill="#f59e0b" font-family="monospace" font-size="28" font-weight="bold">6.2</text>
+    <text x="0" y="65" text-anchor="middle" fill="#aa7733" font-family="monospace" font-size="12">/10 RISK</text>
+  </g>
+  <!-- Alert markers -->
+  <g fill="#f59e0b" opacity="0.5">
+    <polygon points="60,85 65,75 70,85" stroke="#f59e0b" stroke-width="1"/>
+    <polygon points="430,85 435,75 440,85" stroke="#f59e0b" stroke-width="1"/>
+  </g>
+  <!-- Title -->
+  <text x="250" y="435" text-anchor="middle" fill="#ffffff" font-family="monospace" font-size="20" font-weight="bold" letter-spacing="2">RISK SCORER</text>
+  <!-- Branding -->
+  <text x="250" y="460" text-anchor="middle" fill="#8a5533" font-family="monospace" font-size="11">AgentFi</text>
+  <!-- ERC-7857 badge -->
+  <g transform="translate(380,20)">
+    <rect width="100" height="24" rx="5" fill="#f59e0b" opacity="0.15" stroke="#f59e0b" stroke-width="0.8"/>
+    <text x="50" y="16" text-anchor="middle" fill="#f59e0b" font-family="monospace" font-size="9" font-weight="bold">ERC-7857 iNFT</text>
+  </g>
+  <!-- Corner accents -->
+  <circle cx="30" cy="30" r="4" fill="#f59e0b" opacity="0.6"/>
+  <circle cx="470" cy="470" r="4" fill="#f59e0b" opacity="0.6"/>
+</svg>

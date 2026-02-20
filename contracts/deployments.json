@@ -1,0 +1,74 @@
+{
+  "chain": {
+    "name": "0G Galileo Testnet",
+    "chainId": 16602,
+    "rpc": "https://evmrpc-testnet.0g.ai",
+    "explorer": "https://chainscan-galileo.0g.ai"
+  },
+  "deployer": "0x96455C9b00D530BD0629b71B674298440328b1Dd",
+  "contracts": {
+    "AgentNFTv2": {
+      "address": "0xE79Bf574BfCfC17bA858CC311CE5FeF8B78e947B",
+      "standard": "ERC-7857 (iNFT)"
+    },
+    "AgentMarketplacev2": {
+      "address": "0xC203E2686601Cc252EcE66F8c792FF88E8fbDD9b",
+      "platformFeeBps": 250,
+      "platformWallet": "0x96455C9b00D530BD0629b71B674298440328b1Dd"
+    }
+  },
+  "agents": [
+    {
+      "tokenId": 0,
+      "name": "AgentFi Portfolio Analyzer",
+      "description": "Autonomous DeFi portfolio analysis with real-time CoinGecko data",
+      "pricePerCall": "0.001 ETH",
+      "capabilities": ["portfolio_analysis", "token_tracking", "allocation_report", "real_time_prices", "wallet_balance"],
+      "storage": {
+        "image": {
+          "file": "images/agent-0-portfolio.svg",
+          "rootHash": "0x2972c682b617d98a79128993464df7f110030bee751a7c9a7a844fdb8c73b994"
+        },
+        "metadata": {
+          "file": "metadata/agent-0-portfolio-analyzer.json",
+          "rootHash": "0x635c97fdd5fb6da6db5bbb418998733f8cf9a6c85606e3ce641a9eb908f761a2"
+        }
+      }
+    },
+    {
+      "tokenId": 1,
+      "name": "AgentFi Yield Optimizer",
+      "description": "Multi-protocol yield optimization - SaucerSwap, Bonzo Finance, DeFi Llama",
+      "pricePerCall": "0.001 ETH",
+      "capabilities": ["yield_optimization", "defi_yields", "saucerswap", "bonzo_finance", "strategy_recommendation"],
+      "storage": {
+        "image": {
+          "file": "images/agent-1-yield.svg",
+          "rootHash": "0xa69ea2bfb648d6764e2ab0c0e541a1c2100d9b69b83cf9cf4c9eca5de36f6e05"
+        },
+        "metadata": {
+          "file": "metadata/agent-1-yield-optimizer.json",
+          "rootHash": "0xca4ab8728f6319f2f90c25c66dd7b5e20c2f773215329e8ec261d349c56de18b"
+        }
+      }
+    },
+    {
+      "tokenId": 2,
+      "name": "AgentFi Risk Scorer",
+      "description": "Deterministic portfolio risk scoring - volatility, concentration, stablecoin analysis",
+      "pricePerCall": "0.0005 ETH",
+      "capabilities": ["risk_scoring", "volatility_analysis", "deterministic_scoring", "portfolio_assessment"],
+      "storage": {
+        "image": {
+          "file": "images/agent-2-risk.svg",
+          "rootHash": "0x07011e703b01baf26f87daa3c7b890c605c6e70add63d0d8c67fe3cb77212bec"
+        },
+        "metadata": {
+          "file": "metadata/agent-2-risk-scorer.json",
+          "rootHash": "0x038a76b255e7655b48138fabbf3fba5f42158ff43e590b254ae886104bdeda82"
+        }
+      }
+    }
+  ],
+  "deployedAt": "2026-02-19"
+}
