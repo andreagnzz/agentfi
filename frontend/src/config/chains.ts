@@ -4,7 +4,7 @@ import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 export const ogTestnet = defineChain({
   id: 16602,
   name: "0G-Galileo-Testnet",
-  nativeCurrency: { name: "0G", symbol: "OG", decimals: 18 },
+  nativeCurrency: { name: "0G Token", symbol: "OG", decimals: 18 },
   rpcUrls: {
     default: {
       http: [
@@ -24,7 +24,7 @@ export const ogTestnet = defineChain({
 export const adiTestnet = defineChain({
   id: Number(process.env.NEXT_PUBLIC_ADI_CHAIN_ID ?? "99999"),
   name: "ADI Network AB Testnet",
-  nativeCurrency: { name: "ADI", symbol: "ADI", decimals: 18 },
+  nativeCurrency: { name: "ADI Token", symbol: "ADI", decimals: 18 },
   rpcUrls: {
     default: {
       http: [

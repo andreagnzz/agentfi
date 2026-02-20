@@ -1,7 +1,9 @@
 """Yield Optimizer Agent — uses real APY data from DeFi Llama + Bonzo Finance."""
+import json
+
 from anthropic import AsyncAnthropic
 from agents.base_agent import BaseAgent
-from agents.defi_data import get_defi_yields, get_bonzo_data
+from agents.defi_data import get_defi_yields, get_bonzo_data, get_wallet_balances
 import logging
 
 logger = logging.getLogger(__name__)
@@ -12,7 +14,7 @@ class YieldOptimizerAgent(BaseAgent):
     description: str = "Recommends optimal yield strategies using real protocol APYs"
     price_per_call: float = 0.5
 
-    async def execute(self, query: str) -> str:
+    async def execute(self, query: str, wallet_address: str | None = None) -> str:
         try:
             # 1. Fetch real yield data from DeFi Llama + Bonzo Finance
             yields, bonzo = await get_defi_yields(), await get_bonzo_data()
@@ -38,7 +40,17 @@ class YieldOptimizerAgent(BaseAgent):
                 )
             bonzo_context = "\n".join(bonzo_lines)
 
-            # 4. Ask Claude to recommend with real data
+            # 4. Fetch wallet balances if address provided
+            wallet_context = ""
+            if wallet_address:
+                balances = await get_wallet_balances(wallet_address)
+                wallet_context = f"""
+
+CONNECTED WALLET: {wallet_address}
+WALLET DATA: {json.dumps(balances, indent=2)}
+The user is connected with this wallet. Reference their address and real balance in your recommendations."""
+
+            # 5. Ask Claude to recommend with real data
             system_prompt = f"""You are a DeFi yield optimizer with access to REAL-TIME yield data.
 
 LIVE YIELD OPPORTUNITIES (from DeFi Llama):
@@ -46,6 +58,7 @@ LIVE YIELD OPPORTUNITIES (from DeFi Llama):
 
 HEDERA ECOSYSTEM — BONZO FINANCE (Hedera-native lending):
 {bonzo_context}
+{wallet_context}
 
 Your job:
 1. Parse the user's risk profile and asset preferences from their query

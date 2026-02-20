@@ -3,7 +3,7 @@ import { CONTRACT_ADDRESSES } from '@/config/contracts';
 import AgentMarketplaceAbi from '@/abi/AgentMarketplace.json';
 
 export function useHireAgent() {
-  const { writeContract, data: hash, isPending, isError, error } =
+  const { writeContract, data: hash, isPending, isError, error, reset } =
     useWriteContract();
 
   const { isLoading: isConfirming, isSuccess } =
@@ -20,5 +20,5 @@ export function useHireAgent() {
     });
   };
 
-  return { hireAgent, isPending, isConfirming, isSuccess, hash, isError, error };
+  return { hireAgent, isPending, isConfirming, isSuccess, hash, isError, error, reset };
 }

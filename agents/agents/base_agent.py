@@ -7,6 +7,6 @@ class BaseAgent(ABC):
     price_per_call: float  # in HBAR
 
     @abstractmethod
-    async def execute(self, query: str) -> str:
+    async def execute(self, query: str, wallet_address: str | None = None) -> str:
         """Run the agent logic and return a string result."""
         ...

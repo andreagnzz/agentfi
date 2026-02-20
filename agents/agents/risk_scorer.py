@@ -1,7 +1,9 @@
 """Risk Scorer Agent — deterministic scoring from real market data."""
+import json
+
 from anthropic import AsyncAnthropic
 from agents.base_agent import BaseAgent
-from agents.defi_data import get_token_prices, get_token_history
+from agents.defi_data import get_token_prices, get_token_history, get_wallet_balances
 import logging
 import re
 import statistics
@@ -145,7 +147,7 @@ class RiskScorerAgent(BaseAgent):
     description: str = "Scores portfolio risk using real volatility and market data"
     price_per_call: float = 0.3
 
-    async def execute(self, query: str) -> str:
+    async def execute(self, query: str, wallet_address: str | None = None) -> str:
         try:
             # 1. Parse portfolio from query
             portfolio = parse_portfolio(query)
@@ -185,6 +187,15 @@ class RiskScorerAgent(BaseAgent):
 
             portfolio_lines = [f"- {token}: {pct}%" for token, pct in portfolio.items()]
 
+            wallet_context = ""
+            if wallet_address:
+                balances = await get_wallet_balances(wallet_address)
+                wallet_context = f"""
+
+CONNECTED WALLET: {wallet_address}
+WALLET DATA: {json.dumps(balances, indent=2)}
+The user is connected with this wallet. Reference their address and real balance in your risk assessment."""
+
             system_prompt = f"""You are a DeFi risk analyst. A risk score has ALREADY been computed from real data.
 Your job is to EXPLAIN the score — do NOT change it.
 
@@ -204,6 +215,8 @@ SCORE BREAKDOWN:
 - Concentration sub-score: {breakdown['concentration']}/3 (max single asset: {breakdown['max_single_asset_weight']}%)
 - Stablecoin exposure sub-score: {breakdown['stablecoin_exposure']}/2 (stablecoin allocation: {breakdown['stablecoin_pct']}%)
 - 24h Drawdown sub-score: {breakdown['drawdown_24h']}/2 (weighted 24h change: {breakdown['weighted_24h_change_pct']}%)
+
+{wallet_context}
 
 RULES:
 1. Report the score as {total_score}/10 — do not change it

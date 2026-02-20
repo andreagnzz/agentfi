@@ -37,6 +37,7 @@ app.add_middleware(
 
 class ExecuteRequest(BaseModel):
     query: str
+    wallet_address: str | None = None
 
 
 class AgentResponse(BaseModel):
@@ -78,7 +79,7 @@ async def execute_single(agent_id: str, body: ExecuteRequest) -> AgentResponse:
     if not agent:
         return AgentResponse(success=False, data=None, error=f"Unknown agent: {agent_id}")
 
-    result = await agent.execute(body.query)
+    result = await agent.execute(body.query, wallet_address=body.wallet_address)
 
     # Hedera attestation for single-agent calls
     hedera_proof = None
@@ -105,7 +106,7 @@ async def orchestrate(body: ExecuteRequest) -> AgentResponse:
     # Payment provider is resolved here.
     # To switch to x402: instantiate X402PaymentProvider() instead.
     orchestrator = AgentOrchestrator(payment_provider=MockPaymentProvider())
-    output = await orchestrator.execute(body.query)
+    output = await orchestrator.execute(body.query, wallet_address=body.wallet_address)
     return AgentResponse(
         success=True,
         data={

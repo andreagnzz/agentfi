@@ -7,13 +7,13 @@ export function useExecuteAgent() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const execute = async (tokenId: number, query: string) => {
+  const execute = async (tokenId: number, query: string, walletAddress?: string) => {
     setIsLoading(true);
     setError(null);
     setResult(null);
     setHederaProof(null);
     try {
-      const res = await executeAgent(tokenId, query);
+      const res = await executeAgent(tokenId, query, walletAddress);
       if (res.success) {
         // Backend returns { data: { result: "...", hedera_proof: {...} } }
         // or { data: "plain string" } for simple responses

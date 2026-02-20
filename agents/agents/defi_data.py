@@ -1,4 +1,4 @@
-"""Real DeFi data fetching — prices, APYs, protocol data."""
+"""Real DeFi data fetching — prices, APYs, protocol data, wallet balances."""
 import httpx
 import logging
 
@@ -128,3 +128,42 @@ async def get_bonzo_data() -> dict:
             {"asset": "HBARX", "supply_apy": 7.8, "borrow_apy": 10.1, "tvl": 3_000_000},
         ],
     }
+
+
+# --- Wallet Balance (0G Testnet) ---
+
+
+async def get_wallet_balances(wallet_address: str) -> dict:
+    """Fetch native OG balance for a wallet on 0G testnet."""
+    rpc_url = "https://evmrpc-testnet.0g.ai"
+
+    async with httpx.AsyncClient() as client:
+        try:
+            resp = await client.post(rpc_url, json={
+                "jsonrpc": "2.0",
+                "method": "eth_getBalance",
+                "params": [wallet_address, "latest"],
+                "id": 1,
+            }, timeout=10)
+
+            balance_hex = resp.json().get("result", "0x0")
+            balance_wei = int(balance_hex, 16)
+            balance_og = balance_wei / 1e18
+
+            return {
+                "address": wallet_address,
+                "chain": "0G-Galileo-Testnet",
+                "native_balance": {
+                    "symbol": "OG",
+                    "balance": round(balance_og, 6),
+                    "usd_value": None,
+                },
+                "note": "Token balances require ERC-20 multicall — showing native balance only"
+            }
+        except Exception as e:
+            logger.warning(f"Wallet balance fetch error: {e}")
+            return {
+                "address": wallet_address,
+                "error": str(e),
+                "note": "Could not fetch wallet balances"
+            }

@@ -7,25 +7,35 @@ const TOKEN_TO_AGENT: Record<number, string> = {
   2: "risk_scorer",
 };
 
-export async function executeAgent(tokenId: number, query: string) {
+export async function executeAgent(tokenId: number, query: string, walletAddress?: string) {
   const agentId = TOKEN_TO_AGENT[tokenId];
   if (!agentId) throw new Error(`Unknown tokenId: ${tokenId}`);
+
+  const body: Record<string, string> = { query };
+  if (walletAddress) {
+    body.wallet_address = walletAddress;
+  }
 
   const res = await fetch(`${API_BASE}/agents/${agentId}/execute`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query }),
+    body: JSON.stringify(body),
   });
 
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }
 
-export async function orchestrate(query: string) {
+export async function orchestrate(query: string, walletAddress?: string) {
+  const body: Record<string, string> = { query };
+  if (walletAddress) {
+    body.wallet_address = walletAddress;
+  }
+
   const res = await fetch(`${API_BASE}/orchestrate`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query }),
+    body: JSON.stringify(body),
   });
 
   if (!res.ok) throw new Error(`API error: ${res.status}`);

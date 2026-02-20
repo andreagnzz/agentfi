@@ -1,7 +1,9 @@
 """Portfolio Analyzer Agent — uses real market data from CoinGecko."""
+import json
+
 from anthropic import AsyncAnthropic
 from agents.base_agent import BaseAgent
-from agents.defi_data import get_token_prices
+from agents.defi_data import get_token_prices, get_wallet_balances
 import logging
 
 logger = logging.getLogger(__name__)
@@ -19,7 +21,7 @@ class PortfolioAnalyzerAgent(BaseAgent):
     description: str = "Analyzes DeFi portfolio composition using real-time market data"
     price_per_call: float = 0.5
 
-    async def execute(self, query: str) -> str:
+    async def execute(self, query: str, wallet_address: str | None = None) -> str:
         try:
             # 1. Fetch real prices
             prices = await get_token_prices()
@@ -30,11 +32,23 @@ class PortfolioAnalyzerAgent(BaseAgent):
                 for name, data in prices.items()
             ])
 
+            # 2b. Fetch wallet balances if address provided
+            wallet_context = ""
+            if wallet_address:
+                balances = await get_wallet_balances(wallet_address)
+                wallet_context = f"""
+
+CONNECTED WALLET: {wallet_address}
+WALLET DATA: {json.dumps(balances, indent=2)}
+The user is connected with this wallet. Reference their address and real balance in your analysis.
+If they ask about "my portfolio", use their actual on-chain data."""
+
             # 3. Ask Claude to analyze with real data
             system_prompt = f"""You are a DeFi portfolio analyzer with access to REAL-TIME market data.
 
 CURRENT MARKET PRICES (live from CoinGecko):
 {price_context}
+{wallet_context}
 
 Your job:
 1. Parse the user's portfolio allocation from their query

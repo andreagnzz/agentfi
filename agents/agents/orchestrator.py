@@ -66,7 +66,7 @@ class AgentOrchestrator:
                 content = "{}"
         return json.loads(content)["steps"]
 
-    async def execute(self, query: str) -> dict[str, Any]:
+    async def execute(self, query: str, wallet_address: str | None = None) -> dict[str, Any]:
         steps = await self._plan(query)
         outputs: list[str] = []
         hedera_proofs: list[dict] = []
@@ -85,13 +85,13 @@ class AgentOrchestrator:
                 continue
 
             logger.info("[orchestrator] step %d: %s", i, agent_name)
-            result = await agent.execute(agent_input)
+            result = await agent.execute(agent_input, wallet_address=wallet_address)
 
             # Optional payment — non-blocking, never crashes the flow
             try:
                 if self.payment_provider:
                     await self.payment_provider.charge(
-                        from_address="user",  # TODO: pass real wallet address
+                        from_address=wallet_address or "user",
                         to_address=f"agent.{agent_name}",
                         amount=agent.price_per_call,
                         metadata={"step": i, "agent": agent_name, "query": agent_input[:100]},

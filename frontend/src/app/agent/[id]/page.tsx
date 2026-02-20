@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Space_Mono, DM_Sans } from "next/font/google";
-import { useReadContract } from "wagmi";
+import { useReadContract, useAccount } from "wagmi";
 import { useAgentData } from "@/hooks/useAgentData";
 import { useHireAgent } from "@/hooks/useHireAgent";
 import { useExecuteAgent } from "@/hooks/useExecuteAgent";
@@ -11,6 +11,7 @@ import { TOKEN_TO_AGENT } from "@/lib/api";
 import { CONTRACT_ADDRESSES } from "@/config/contracts";
 import AgentMarketplaceAbi from "@/abi/AgentMarketplace.json";
 import { formatEther } from "viem";
+import ReactMarkdown from "react-markdown";
 
 const spaceMono = Space_Mono({ subsets: ["latin"], weight: ["400", "700"] });
 const dmSans = DM_Sans({ subsets: ["latin"] });
@@ -34,30 +35,9 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string }> = {
   Risk: { bg: "rgba(196,122,90,0.1)", text: "#C47A5A" },
 };
 
-function formatMarkdown(text: string): string {
-  // Escape HTML first to prevent XSS
-  const escaped = text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-  return escaped
-    // Headers (must come before other inline rules)
-    .replace(/^### (.+)$/gm, '<h4 style="font-size:15px;font-weight:700;margin:16px 0 8px;color:#E8C97A">$1</h4>')
-    .replace(/^## (.+)$/gm, '<h3 style="font-size:17px;font-weight:700;margin:20px 0 10px;color:#F5ECD7">$1</h3>')
-    .replace(/^# (.+)$/gm, '<h2 style="font-size:20px;font-weight:700;margin:20px 0 12px;color:#F5ECD7">$1</h2>')
-    // Horizontal rules
-    .replace(/^---$/gm, '<hr style="border:none;border-top:1px solid #3D2E1A;margin:16px 0"/>')
-    // Bold
-    .replace(/\*\*(.+?)\*\*/g, '<strong style="color:#E8C97A">$1</strong>')
-    // Table rows (simple pipe-delimited)
-    .replace(/\|(.+)\|/g, (match) => `<span style="font-family:monospace;font-size:12px">${match}</span>`)
-    // Line breaks
-    .replace(/\n\n/g, '<div style="height:12px"></div>')
-    .replace(/\n/g, '<br/>');
-}
-
 export default function AgentPage({ params }: { params: { id: string } }) {
   const router = useRouter();
+  const { address } = useAccount();
   const tokenId = Number(params.id);
   const { agentData, isLoading: dataLoading, isError: dataError } =
     useAgentData(tokenId);
@@ -69,6 +49,7 @@ export default function AgentPage({ params }: { params: { id: string } }) {
     hash: txHash,
     isError: txError,
     error: txErrorMsg,
+    reset: resetHire,
   } = useHireAgent();
   const {
     execute,
@@ -105,7 +86,7 @@ export default function AgentPage({ params }: { params: { id: string } }) {
   useEffect(() => {
     if (txSuccess && step === "confirming" && query) {
       setStep("executing");
-      execute(tokenId, query);
+      execute(tokenId, query, address);
     }
   }, [txSuccess, step, query, tokenId, execute]);
 
@@ -521,10 +502,16 @@ export default function AgentPage({ params }: { params: { id: string } }) {
               {agentResult && (
                 <>
                   <div
+                    className="prose prose-invert prose-amber max-w-none
+                      [&_h1]:text-2xl [&_h1]:text-amber-100 [&_h1]:font-bold [&_h1]:mb-4
+                      [&_h2]:text-xl [&_h2]:text-amber-200 [&_h2]:font-bold [&_h2]:mb-3
+                      [&_h3]:text-lg [&_h3]:text-amber-300 [&_h3]:font-semibold [&_h3]:mb-2
+                      [&_strong]:text-amber-200
+                      [&_table]:w-full [&_th]:text-left [&_th]:text-amber-400 [&_th]:pb-2
+                      [&_td]:py-1 [&_td]:pr-4 [&_td]:text-neutral-300
+                      [&_li]:text-neutral-300 [&_p]:text-neutral-300 [&_p]:mb-3
+                      text-neutral-300 leading-relaxed"
                     style={{
-                      color: "#F5ECD7",
-                      fontSize: 14,
-                      lineHeight: 1.7,
                       background: "#1A1208",
                       border: "1px solid #3D2E1A",
                       borderRadius: 8,
@@ -532,8 +519,9 @@ export default function AgentPage({ params }: { params: { id: string } }) {
                       maxHeight: 500,
                       overflowY: "auto",
                     }}
-                    dangerouslySetInnerHTML={{ __html: formatMarkdown(agentResult) }}
-                  />
+                  >
+                    <ReactMarkdown>{agentResult}</ReactMarkdown>
+                  </div>
 
                   {/* Hedera Proof */}
                   {hederaProof && (
@@ -592,6 +580,7 @@ export default function AgentPage({ params }: { params: { id: string } }) {
                       setStep("idle");
                       setQuery("");
                       resetAgent();
+                      resetHire();
                     }}
                     className={spaceMono.className}
                     style={{
