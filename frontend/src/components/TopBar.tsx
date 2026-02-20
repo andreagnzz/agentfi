@@ -1,6 +1,7 @@
 "use client"
 import { useSidebar } from "@/components/ui/sidebar"
 import Link from "next/link"
+import WalletConnect from "./WalletConnect"
 
 export default function TopBar() {
   const { open, setOpen } = useSidebar()
@@ -39,6 +40,11 @@ export default function TopBar() {
           AgentFi
         </span>
       </Link>
+
+      {/* Wallet — right side */}
+      <div style={{ marginLeft: "auto" }}>
+        <WalletConnect />
+      </div>
     </div>
   )
 }
