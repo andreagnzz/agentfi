@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import dynamic from "next/dynamic"
 import { Space_Mono, DM_Sans } from "next/font/google"
 import PixelTransition from "@/components/PixelTransition"
@@ -14,21 +14,30 @@ const spaceMono = Space_Mono({ subsets: ["latin"], weight: ["400", "700"] })
 const dmSans = DM_Sans({ subsets: ["latin"] })
 
 const LINES = [
-  { text: "AgentFi v1.0.0", color: "#C9A84C" },
-  { text: "Connecting to ADI Chain... ✓", color: "#7A9E6E" },
-  { text: "Loading agent registry... ✓", color: "#7A9E6E" },
-  { text: 'Agent: Portfolio Analyzer', color: "#F5ECD7" },
-  { text: 'Query: "Analyze my DeFi positions"', color: "#9A8060" },
-  { text: "Running on Hedera via Agent Kit...", color: "#9A8060" },
-  { text: "─────────────────────", color: "#3D2E1A" },
-  { text: "RESULT: High ETH concentration", color: "#F5ECD7" },
-  { text: "Risk Score: 7.2/10", color: "#C47A5A" },
-  { text: "Recommendation: Rebalance →", color: "#F5ECD7" },
-  { text: "yield_optimizer executing...", color: "#9A8060" },
-  { text: "APY found: 12.4% (Aave v3)", color: "#7A9E6E" },
-  { text: "─────────────────────", color: "#3D2E1A" },
-  { text: "Payment: 0.01 ADI ✓ settled", color: "#7A9E6E" },
-  { text: "iNFT #0042 minted on 0G ✓", color: "#C9A84C" },
+  { text: "AgentFi v1.0.0 — Multi-Chain Agent Marketplace", color: "#C9A84C" },
+  { text: "────────────────────────────────────────────", color: "#3D2E1A" },
+  { text: "Connecting to 0G Chain testnet... ✓", color: "#7A9E6E" },
+  { text: "Connecting to Hedera HCS-10... ✓", color: "#7A9E6E" },
+  { text: "Connecting to ADI Chain L2... ✓", color: "#7A9E6E" },
+  { text: "Loading agent registry... 3 agents found", color: "#9A8060" },
+  { text: "────────────────────────────────────────────", color: "#3D2E1A" },
+  { text: "WALLET  0x3f...a2 connected", color: "#F5ECD7" },
+  { text: "BALANCE 0.031 ADI · 3 iNFTs owned", color: "#C9A84C" },
+  { text: "────────────────────────────────────────────", color: "#3D2E1A" },
+  { text: "> Agent #0042 [Portfolio Analyzer] running...", color: "#9A8060" },
+  { text: "  Scanning wallet positions across 12 protocols", color: "#9A8060" },
+  { text: "  ETH: 62% · USDC: 21% · BTC: 17%", color: "#F5ECD7" },
+  { text: "  Risk Score: 7.2 / 10 — concentration HIGH", color: "#C47A5A" },
+  { text: "  Recommendation: rebalance ETH → USDC", color: "#F5ECD7" },
+  { text: "────────────────────────────────────────────", color: "#3D2E1A" },
+  { text: "> Agent #0043 [Yield Optimizer] running...", color: "#9A8060" },
+  { text: "  Scanning 50+ DeFi protocols for APY...", color: "#9A8060" },
+  { text: "  Best opportunity: Aave v3 USDC — 12.4% APY", color: "#7A9E6E" },
+  { text: "  Executing rebalance recommendation...", color: "#9A8060" },
+  { text: "────────────────────────────────────────────", color: "#3D2E1A" },
+  { text: "PAYMENT  0.01 ADI settled on ADI Chain ✓", color: "#7A9E6E" },
+  { text: "HCS-10   Agent execution logged on Hedera ✓", color: "#7A9E6E" },
+  { text: "iNFT     #0042 state updated on 0G Chain ✓", color: "#C9A84C" },
 ]
 
 export default function HomePage() {
@@ -36,6 +45,7 @@ export default function HomePage() {
   const [currentLine, setCurrentLine] = useState(0)
   const [currentChar, setCurrentChar] = useState(0)
   const [currentText, setCurrentText] = useState("")
+  const terminalRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (currentLine >= LINES.length) return
@@ -46,15 +56,23 @@ export default function HomePage() {
       const timeout = setTimeout(() => {
         setCurrentText(prev => prev + line.text[currentChar])
         setCurrentChar(prev => prev + 1)
-      }, 28)
+      }, 18)
       return () => clearTimeout(timeout)
     } else {
       const timeout = setTimeout(() => {
-        setDisplayedLines(prev => [...prev, { text: line.text, color: line.color }])
+        setDisplayedLines(prev => {
+          const next = [...prev, { text: line.text, color: line.color }]
+          setTimeout(() => {
+            if (terminalRef.current) {
+              terminalRef.current.scrollTop = terminalRef.current.scrollHeight
+            }
+          }, 10)
+          return next
+        })
         setCurrentText("")
         setCurrentChar(0)
         setCurrentLine(prev => prev + 1)
-      }, 80)
+      }, 50)
       return () => clearTimeout(timeout)
     }
   }, [currentLine, currentChar])
@@ -127,7 +145,7 @@ export default function HomePage() {
       <main className={`${dmSans.className} relative min-h-screen`}>
 
         {/* ── Section 1: Hero ── */}
-        <section className="relative mx-auto flex min-h-screen max-w-7xl items-center px-6" style={{ paddingTop: "40px", paddingBottom: "80px" }}>
+        <section className="relative mx-auto flex min-h-screen max-w-7xl items-center px-6" style={{ paddingTop: "20px", paddingBottom: "80px" }}>
           <div className="grid w-full gap-12 lg:grid-cols-5">
             {/* Left */}
             <div className="flex flex-col justify-center lg:col-span-3">
@@ -220,7 +238,7 @@ export default function HomePage() {
             <div className="flex items-center lg:col-span-2">
               <div
                 className="glow-card w-full overflow-hidden rounded-xl backdrop-blur"
-                style={{ background: "var(--bg-surface)", border: "1px solid var(--border-bright)" }}
+                style={{ background: "var(--bg-surface)", border: "1px solid var(--border-bright)", minHeight: 420 }}
               >
                 <div className="flex items-center gap-2 px-4 py-3" style={{ borderBottom: "1px solid var(--border-bright)" }}>
                   <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#FF5F57" }} />
@@ -230,7 +248,7 @@ export default function HomePage() {
                     agentfi-terminal
                   </span>
                 </div>
-                <div className="p-5">
+                <div ref={terminalRef} className="p-5" style={{ maxHeight: 360, overflowY: "auto" }}>
                   <div style={{ fontFamily: "monospace", fontSize: 12, lineHeight: 1.8, display: "flex", flexDirection: "column", gap: 2 }}>
                     {displayedLines.map((line, i) => (
                       <div key={i} style={{ color: line.color }}>{line.text}</div>
