@@ -203,11 +203,17 @@ export default function HomePage() {
                 </GlareHover>
               </div>
 
-              <div style={{ width: "100%", marginTop: 24, overflow: "hidden" }}>
-                <CurvedLoop marqueeText="✦ ETHDenver 2026 ✦ ETHDenver 2026 ✦ ETHDenver 2026 ✦ " speed={0.4} curveAmount={60} direction="left" className="curved-text-gold"/>
-                <CurvedLoop marqueeText="✦ Marketplace Agents ✦ Marketplace Agents ✦ Marketplace Agents ✦ " speed={0.5} curveAmount={80} direction="right" className="curved-text-gold"/>
-                <CurvedLoop marqueeText="✦ Multi-Chain ✦ Multi-Chain ✦ Multi-Chain ✦ Multi-Chain ✦ " speed={0.3} curveAmount={50} direction="left" className="curved-text-gold"/>
+              <div style={{ padding: "40px 0" }}>
+                <LogoCarousel />
               </div>
+              <CurvedLoop
+                marqueeText="✦ 0G CHAIN · ERC-7857 iNFT · HEDERA HCS-10 · AGENT KIT · ADI CHAIN · FATF COMPLIANT · DEFAI · MULTI-CHAIN · AUTONOMOUS AGENTS · "
+                speed={0.6}
+                curveAmount={40}
+                direction="left"
+                className="curved-text-gold"
+                fontSize={22}
+              />
             </div>
 
             {/* Right — Terminal */}
@@ -241,23 +247,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ── Section 2: Multi-Chain by Design ── */}
-        <section className="px-6 py-20" style={{ borderTop: "1px solid var(--border)" }}>
-          <div className="mx-auto flex max-w-5xl flex-col items-center gap-12">
-            <div className="text-center">
-              <h2
-                className={`${spaceMono.className} mb-3 text-3xl font-bold`}
-                style={{ color: "var(--text-primary)", letterSpacing: "0.02em" }}
-              >
-                Multi-Chain by Design
-              </h2>
-              <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                Each chain plays a specific role in the agent economy
-              </p>
-            </div>
-            <LogoCarousel />
-          </div>
-        </section>
       </main>
     </>
   );
