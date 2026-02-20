@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Test} from "forge-std/Test.sol";
-import {AgentNFT} from "../src/AgentNFT.sol";
+import {AgentNFT} from "../src/AgentNFT_v1.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 contract AgentNFTTest is Test {

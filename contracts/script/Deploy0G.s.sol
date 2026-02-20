@@ -2,8 +2,8 @@
 pragma solidity ^0.8.24;
 
 import "forge-std/Script.sol";
-import "../src/AgentNFT.sol";
-import "../src/AgentMarketplace.sol";
+import "../src/AgentNFT_v1.sol";
+import "../src/AgentMarketplace_v1.sol";
 
 contract Deploy0G is Script {
     function run() external {

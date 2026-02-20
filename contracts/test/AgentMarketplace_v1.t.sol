@@ -2,8 +2,8 @@
 pragma solidity ^0.8.24;
 
 import {Test} from "forge-std/Test.sol";
-import {AgentNFT} from "../src/AgentNFT.sol";
-import {AgentMarketplace} from "../src/AgentMarketplace.sol";
+import {AgentNFT} from "../src/AgentNFT_v1.sol";
+import {AgentMarketplace} from "../src/AgentMarketplace_v1.sol";
 
 contract AgentMarketplaceTest is Test {
     AgentNFT public nft;
