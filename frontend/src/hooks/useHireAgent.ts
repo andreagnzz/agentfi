@@ -16,7 +16,7 @@ export function useHireAgent() {
       functionName: 'hireAgent',
       args: [BigInt(tokenId)],
       value: priceInWei,
-      chainId: 16600,
+      chainId: 16602,
     });
   };
 

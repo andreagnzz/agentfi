@@ -8,7 +8,7 @@ export function useAgentData(tokenId: number) {
     abi: AgentNFTAbi,
     functionName: 'getAgentData',
     args: [BigInt(tokenId)],
-    chainId: 16600,
+    chainId: 16602,
   });
 
   // viem decodes struct as object with named fields

@@ -10,7 +10,7 @@ export function useMyAgents() {
     address: CONTRACT_ADDRESSES.AgentMarketplace as `0x${string}`,
     abi: AgentMarketplaceAbi,
     functionName: "getListedAgents",
-    chainId: 16600,
+    chainId: 16602,
   });
 
   const myAgents =

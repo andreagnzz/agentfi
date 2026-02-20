@@ -62,7 +62,7 @@ export default function AgentPage({ params }: { params: { id: string } }) {
     abi: AgentMarketplaceAbi,
     functionName: "getListing",
     args: [BigInt(tokenId)],
-    chainId: 16600,
+    chainId: 16602,
   });
   const ownerAddress = listingData
     ? ((listingData as any).owner ?? (listingData as any)[1]) as string

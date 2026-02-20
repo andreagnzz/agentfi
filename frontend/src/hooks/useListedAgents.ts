@@ -7,7 +7,7 @@ export function useListedAgents() {
     address: CONTRACT_ADDRESSES.AgentMarketplace as `0x${string}`,
     abi: AgentMarketplaceAbi,
     functionName: 'getListedAgents',
-    chainId: 16600,
+    chainId: 16602,
   });
 
   // viem decodes tuple[] with named components as an array of objects

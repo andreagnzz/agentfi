@@ -2,8 +2,8 @@ import { defineChain } from "viem";
 import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 
 export const ogTestnet = defineChain({
-  id: 16600,
-  name: "0G Testnet",
+  id: 16602,
+  name: "0G-Galileo-Testnet",
   nativeCurrency: { name: "0G", symbol: "OG", decimals: 18 },
   rpcUrls: {
     default: {

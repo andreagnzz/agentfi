@@ -31,7 +31,7 @@ agentfi/
 ## Critical Chain Info
 | Chain     | Role                     | Chain ID | RPC                             |
 |-----------|--------------------------|----------|---------------------------------|
-| 0G Chain  | iNFT + DeFAI contracts   | 16600    | https://evmrpc-testnet.0g.ai   |
+| 0G Chain  | iNFT + DeFAI contracts   | 16602    | https://evmrpc-testnet.0g.ai   |
 | ADI Chain | Payments + compliance    | TBD      | See ADI docs                    |
 | Hedera    | Agent orchestration      | testnet  | portal.hedera.com               |
 
