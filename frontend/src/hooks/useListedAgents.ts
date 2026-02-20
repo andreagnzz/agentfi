@@ -1,11 +1,11 @@
 import { useReadContract } from 'wagmi';
 import { CONTRACT_ADDRESSES } from '@/config/contracts';
-import AgentMarketplaceAbi from '@/abi/AgentMarketplace.json';
+import AgentMarketplacev2Abi from '@/abi/AgentMarketplacev2.json';
 
 export function useListedAgents() {
   const { data, isLoading, isError, refetch } = useReadContract({
     address: CONTRACT_ADDRESSES.AgentMarketplace as `0x${string}`,
-    abi: AgentMarketplaceAbi,
+    abi: AgentMarketplacev2Abi,
     functionName: 'getListedAgents',
     chainId: 16602,
   });

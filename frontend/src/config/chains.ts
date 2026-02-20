@@ -4,7 +4,7 @@ import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 export const ogTestnet = defineChain({
   id: 16602,
   name: "0G-Galileo-Testnet",
-  nativeCurrency: { name: "0G Token", symbol: "OG", decimals: 18 },
+  nativeCurrency: { name: "A0GI", symbol: "A0GI", decimals: 18 },
   rpcUrls: {
     default: {
       http: [

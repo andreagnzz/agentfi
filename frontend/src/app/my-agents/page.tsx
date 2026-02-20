@@ -7,15 +7,10 @@ import PixelTransition from "@/components/PixelTransition"
 import GlareHover from "@/components/GlareHover"
 import { useMyAgents } from "@/hooks/useMyAgents"
 import { useAgentData } from "@/hooks/useAgentData"
+import { CONTRACT_ADDRESSES } from "@/config/contracts"
 
 const spaceMono = Space_Mono({ subsets: ["latin"], weight: ["400", "700"] })
 const dmSans = DM_Sans({ subsets: ["latin"] })
-
-const AGENT_NAMES: Record<number, string> = {
-  0: "Portfolio Analyzer",
-  1: "Yield Optimizer",
-  2: "Risk Scorer",
-}
 
 const TIMELINE = [
   { time: "14:32", title: "iNFT #2 executed", detail: "Risk score computed: 7.2/10" },
@@ -30,7 +25,7 @@ const TIMELINE = [
 function AgentNFTCard({ tokenId, pricePerHire }: { tokenId: number; pricePerHire: bigint }) {
   const router = useRouter()
   const { agentData, isLoading } = useAgentData(tokenId)
-  const name = AGENT_NAMES[tokenId] || `Agent #${tokenId}`
+  const name = agentData?.name || `Agent #${tokenId}`
 
   const cardStyle = {
     background: "#241A0E",
@@ -56,9 +51,9 @@ function AgentNFTCard({ tokenId, pricePerHire }: { tokenId: number; pricePerHire
   }
 
   const metaFields = [
-    { label: "Model", value: agentData?.modelHash || "—" },
-    { label: "Capabilities", value: agentData?.capabilities?.length ? (agentData.capabilities as string[]).join(", ") : "—" },
-    { label: "Price / Hire", value: `${formatEther(pricePerHire)} OG` },
+    { label: "Description", value: agentData?.description || "---" },
+    { label: "Capabilities", value: agentData?.capabilities?.length ? (agentData.capabilities as string[]).join(", ") : "---" },
+    { label: "Price / Hire", value: `${formatEther(pricePerHire)} A0GI` },
     { label: "Token ID", value: `#${tokenId}` },
   ]
 
@@ -219,6 +214,23 @@ export default function MyAgentsPage() {
             <span className={spaceMono.className} style={{ color: "#9A8060", fontSize: 14, flex: 1, textAlign: "center" }}>
               0G Chain &middot; Testnet
             </span>
+          </div>
+
+          {/* NFT import tip */}
+          <div style={{
+            fontSize: 12,
+            color: "#9A8060",
+            background: "rgba(26,18,8,0.5)",
+            borderRadius: 8,
+            padding: 12,
+            marginBottom: 24,
+            border: "1px solid #3D2E1A",
+            lineHeight: 1.6,
+          }}>
+            <span style={{ color: "#C9A84C", fontWeight: 700 }}>Tip:</span>{" "}
+            To see your iNFTs in MetaMask: NFTs tab &rarr; Import NFT &rarr;
+            Contract: <span className={spaceMono.className} style={{ color: "#C9A84C", fontSize: 11 }}>{CONTRACT_ADDRESSES.AgentNFT}</span> &rarr;
+            Token ID: <span className={spaceMono.className} style={{ color: "#C9A84C", fontSize: 11 }}>0</span> (or 1, 2)
           </div>
 
           {/* Loading */}

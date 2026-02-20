@@ -15,8 +15,13 @@ function getAddress(
   return address as `0x${string}`;
 }
 
+// V2 contracts (ERC-7857) — AgentNFT key maps to AgentNFTv2, AgentMarketplace maps to AgentMarketplacev2
 export const CONTRACT_ADDRESSES = {
   AgentNFT: getAddress(ogTestnet.id, "AgentNFT"),
   AgentMarketplace: getAddress(ogTestnet.id, "AgentMarketplace"),
   AgentPayment: getAddress(adiTestnet.id, "AgentPayment"),
 } as const;
+
+// Platform fee: 2.5% (250 basis points)
+export const PLATFORM_FEE_BPS = 250;
+export const PLATFORM_FEE_PCT = "2.5%";

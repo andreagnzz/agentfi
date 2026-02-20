@@ -1,8 +1,8 @@
 {
   "16602": {
-    "chainName": "0G Testnet",
-    "AgentNFT": "0x10e3399025e930da7b4d4be71181157ccee4e882",
-    "AgentMarketplace": "0x1a9e3f39cf83e53ca34933f81b409a92ad004246"
+    "chainName": "0G Galileo Testnet",
+    "AgentNFT": "0xE79Bf574BfCfC17bA858CC311CE5FeF8B78e947B",
+    "AgentMarketplace": "0xC203E2686601Cc252EcE66F8c792FF88E8fbDD9b"
   },
   "99999": {
     "chainName": "ADI Testnet",

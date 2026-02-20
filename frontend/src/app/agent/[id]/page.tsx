@@ -3,25 +3,17 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Space_Mono, DM_Sans } from "next/font/google";
-import { useReadContract, useAccount } from "wagmi";
-import { useAgentData } from "@/hooks/useAgentData";
+import { useAccount } from "wagmi";
+import { useAgentData, useIsAuthorized } from "@/hooks/useAgentData";
 import { useHireAgent } from "@/hooks/useHireAgent";
 import { useExecuteAgent } from "@/hooks/useExecuteAgent";
 import { TOKEN_TO_AGENT } from "@/lib/api";
-import { CONTRACT_ADDRESSES } from "@/config/contracts";
-import AgentMarketplaceAbi from "@/abi/AgentMarketplace.json";
+import { PLATFORM_FEE_PCT } from "@/config/contracts";
 import { formatEther } from "viem";
 import ReactMarkdown from "react-markdown";
 
 const spaceMono = Space_Mono({ subsets: ["latin"], weight: ["400", "700"] });
 const dmSans = DM_Sans({ subsets: ["latin"] });
-
-// Agent display names
-const AGENT_NAMES: Record<number, string> = {
-  0: "Portfolio Analyzer",
-  1: "Yield Optimizer",
-  2: "Risk Scorer",
-};
 
 const CATEGORY_MAP: Record<number, string> = {
   0: "DeFi",
@@ -39,10 +31,22 @@ export default function AgentPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const { address } = useAccount();
   const tokenId = Number(params.id);
-  const { agentData, isLoading: dataLoading, isError: dataError } =
-    useAgentData(tokenId);
+  const {
+    agentData,
+    metadataHash,
+    owner: ownerAddress,
+    isLoading: dataLoading,
+    isError: dataError,
+  } = useAgentData(tokenId);
+  const isAuthorized = useIsAuthorized(tokenId, address);
+  const isOwner =
+    address && ownerAddress
+      ? address.toLowerCase() === ownerAddress.toLowerCase()
+      : false;
+
   const {
     hireAgent,
+    hireAsOwner,
     isPending: txPending,
     isConfirming: txConfirming,
     isSuccess: txSuccess,
@@ -60,24 +64,13 @@ export default function AgentPage({ params }: { params: { id: string } }) {
     reset: resetAgent,
   } = useExecuteAgent();
 
-  // Fetch listing to get owner address
-  const { data: listingData } = useReadContract({
-    address: CONTRACT_ADDRESSES.AgentMarketplace as `0x${string}`,
-    abi: AgentMarketplaceAbi,
-    functionName: "getListing",
-    args: [BigInt(tokenId)],
-    chainId: 16602,
-  });
-  const ownerAddress = listingData
-    ? ((listingData as any).owner ?? (listingData as any)[1]) as string
-    : null;
-
   const [query, setQuery] = useState("");
   const [step, setStep] = useState<
     "idle" | "tx" | "confirming" | "executing" | "done"
   >("idle");
 
-  const agentName = AGENT_NAMES[tokenId] || `Agent #${tokenId}`;
+  // Name from contract, not hardcoded
+  const agentName = agentData?.name || `Agent #${tokenId}`;
   const category = CATEGORY_MAP[tokenId] || "DeFi";
   const catColor = CATEGORY_COLORS[category] || CATEGORY_COLORS.DeFi;
   const agentId = TOKEN_TO_AGENT[tokenId];
@@ -107,7 +100,11 @@ export default function AgentPage({ params }: { params: { id: string } }) {
   const handleHireAndExecute = () => {
     if (!query.trim() || !agentData) return;
     setStep("tx");
-    hireAgent(tokenId, agentData.pricePerCall);
+    if (isOwner) {
+      hireAsOwner(tokenId);
+    } else {
+      hireAgent(tokenId, agentData.pricePerCall);
+    }
   };
 
   // Watch tx state transitions
@@ -138,6 +135,13 @@ export default function AgentPage({ params }: { params: { id: string } }) {
       default:
         return null;
     }
+  };
+
+  const labelStyle = {
+    color: "#5C4A32",
+    fontSize: 10,
+    letterSpacing: "0.08em",
+    marginBottom: 4,
   };
 
   return (
@@ -173,13 +177,14 @@ export default function AgentPage({ params }: { params: { id: string } }) {
         </div>
       ) : (
         <>
-          {/* Name + category */}
+          {/* Name + badges */}
           <div
             style={{
               display: "flex",
               alignItems: "center",
-              gap: 14,
-              marginBottom: 20,
+              gap: 10,
+              marginBottom: 8,
+              flexWrap: "wrap",
             }}
           >
             <h1
@@ -207,7 +212,28 @@ export default function AgentPage({ params }: { params: { id: string } }) {
             >
               {category}
             </span>
+            <span
+              className={spaceMono.className}
+              style={{
+                background: "rgba(139,92,246,0.1)",
+                color: "#A78BFA",
+                fontSize: 10,
+                letterSpacing: "0.05em",
+                padding: "4px 10px",
+                borderRadius: 999,
+                fontWeight: 700,
+              }}
+            >
+              ERC-7857 iNFT
+            </span>
           </div>
+
+          {/* Description from contract */}
+          {agentData?.description && (
+            <div style={{ color: "#9A8060", fontSize: 14, marginBottom: 20, lineHeight: 1.5 }}>
+              {agentData.description}
+            </div>
+          )}
 
           {/* Metadata card */}
           <div
@@ -228,31 +254,7 @@ export default function AgentPage({ params }: { params: { id: string } }) {
               }}
             >
               <div>
-                <div
-                  className={spaceMono.className}
-                  style={{
-                    color: "#5C4A32",
-                    fontSize: 10,
-                    letterSpacing: "0.08em",
-                    marginBottom: 4,
-                  }}
-                >
-                  MODEL
-                </div>
-                <div style={{ color: "#F5ECD7", fontSize: 14 }}>
-                  {agentData?.modelHash || "—"}
-                </div>
-              </div>
-              <div>
-                <div
-                  className={spaceMono.className}
-                  style={{
-                    color: "#5C4A32",
-                    fontSize: 10,
-                    letterSpacing: "0.08em",
-                    marginBottom: 4,
-                  }}
-                >
+                <div className={spaceMono.className} style={labelStyle}>
                   PRICE PER HIRE
                 </div>
                 <div
@@ -261,9 +263,30 @@ export default function AgentPage({ params }: { params: { id: string } }) {
                 >
                   {agentData
                     ? formatEther(agentData.pricePerCall)
-                    : "—"}{" "}
-                  OG
+                    : "---"}{" "}
+                  A0GI
                 </div>
+                <div style={{ color: "#5C4A32", fontSize: 11, marginTop: 4 }}>
+                  97.5% to owner &middot; {PLATFORM_FEE_PCT} platform fee
+                </div>
+              </div>
+              <div>
+                <div className={spaceMono.className} style={labelStyle}>
+                  OWNER
+                </div>
+                <div
+                  className={spaceMono.className}
+                  style={{ color: "#9A8060", fontSize: 12, wordBreak: "break-all" }}
+                >
+                  {ownerAddress
+                    ? `${ownerAddress.slice(0, 6)}...${ownerAddress.slice(-4)}`
+                    : "---"}
+                </div>
+                {isOwner && (
+                  <div style={{ color: "#7A9E6E", fontSize: 11, marginTop: 4 }}>
+                    You own this agent
+                  </div>
+                )}
               </div>
             </div>
 
@@ -272,18 +295,11 @@ export default function AgentPage({ params }: { params: { id: string } }) {
                 display: "grid",
                 gridTemplateColumns: "1fr 1fr",
                 gap: 16,
+                marginBottom: 16,
               }}
             >
               <div>
-                <div
-                  className={spaceMono.className}
-                  style={{
-                    color: "#5C4A32",
-                    fontSize: 10,
-                    letterSpacing: "0.08em",
-                    marginBottom: 4,
-                  }}
-                >
+                <div className={spaceMono.className} style={labelStyle}>
                   AGENT ID
                 </div>
                 <div
@@ -294,41 +310,75 @@ export default function AgentPage({ params }: { params: { id: string } }) {
                 </div>
               </div>
               <div>
-                <div
-                  className={spaceMono.className}
-                  style={{
-                    color: "#5C4A32",
-                    fontSize: 10,
-                    letterSpacing: "0.08em",
-                    marginBottom: 4,
-                  }}
-                >
-                  OWNER
+                <div className={spaceMono.className} style={labelStyle}>
+                  STORED ON
                 </div>
                 <div
                   className={spaceMono.className}
-                  style={{ color: "#9A8060", fontSize: 12, wordBreak: "break-all" }}
+                  style={{ color: "#9A8060", fontSize: 12 }}
                 >
-                  {ownerAddress
-                    ? `${ownerAddress.slice(0, 6)}...${ownerAddress.slice(-4)}`
-                    : "—"}
+                  0G Storage
                 </div>
               </div>
             </div>
 
+            {/* Metadata Hash (ERC-7857) */}
+            {metadataHash && (
+              <div style={{ marginBottom: 16 }}>
+                <div className={spaceMono.className} style={labelStyle}>
+                  METADATA HASH (ERC-7857)
+                </div>
+                <div
+                  className={spaceMono.className}
+                  style={{ color: "#A78BFA", fontSize: 11, wordBreak: "break-all" }}
+                >
+                  {metadataHash}
+                </div>
+                <div style={{ color: "#5C4A32", fontSize: 10, marginTop: 2 }}>
+                  Proves intelligence is encrypted on-chain
+                </div>
+              </div>
+            )}
+
+            {/* Authorization status */}
+            {address && (
+              <div style={{ marginBottom: 16 }}>
+                <div className={spaceMono.className} style={labelStyle}>
+                  AUTHORIZATION
+                </div>
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                }}>
+                  <div style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: "50%",
+                    background: isOwner || isAuthorized ? "#7A9E6E" : "#5C4A32",
+                  }} />
+                  <span
+                    className={spaceMono.className}
+                    style={{
+                      color: isOwner || isAuthorized ? "#7A9E6E" : "#5C4A32",
+                      fontSize: 12,
+                    }}
+                  >
+                    {isOwner
+                      ? "Owner (always authorized)"
+                      : isAuthorized
+                      ? "Authorized via ERC-7857"
+                      : "Not authorized"}
+                  </span>
+                </div>
+              </div>
+            )}
+
             {/* Capabilities */}
             {agentData?.capabilities &&
               agentData.capabilities.length > 0 && (
-                <div style={{ marginTop: 16 }}>
-                  <div
-                    className={spaceMono.className}
-                    style={{
-                      color: "#5C4A32",
-                      fontSize: 10,
-                      letterSpacing: "0.08em",
-                      marginBottom: 8,
-                    }}
-                  >
+                <div>
+                  <div className={spaceMono.className} style={labelStyle}>
                     CAPABILITIES
                   </div>
                   <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -415,6 +465,8 @@ export default function AgentPage({ params }: { params: { id: string } }) {
                   background:
                     !query.trim() || step !== "idle"
                       ? "#5C4422"
+                      : isOwner
+                      ? "#7A9E6E"
                       : "#C9A84C",
                   color: "#1A1208",
                   border: "none",
@@ -431,7 +483,9 @@ export default function AgentPage({ params }: { params: { id: string } }) {
                 }}
               >
                 {step === "idle"
-                  ? "Hire & Execute \u2192"
+                  ? isOwner
+                    ? "Execute (Free) \u2192"
+                    : `Hire & Execute - ${agentData ? formatEther(agentData.pricePerCall) : "..."} A0GI \u2192`
                   : statusText()}
               </button>
 
@@ -510,6 +564,7 @@ export default function AgentPage({ params }: { params: { id: string } }) {
                       [&_table]:w-full [&_th]:text-left [&_th]:text-amber-400 [&_th]:pb-2
                       [&_td]:py-1 [&_td]:pr-4 [&_td]:text-neutral-300
                       [&_li]:text-neutral-300 [&_p]:text-neutral-300 [&_p]:mb-3
+                      [&_hr]:border-amber-900/30 [&_hr]:my-4
                       text-neutral-300 leading-relaxed"
                     style={{
                       background: "#1A1208",

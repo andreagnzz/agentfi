@@ -7,6 +7,7 @@ import { formatEther } from "viem"
 import PixelTransition from "@/components/PixelTransition"
 import { useListedAgents } from "@/hooks/useListedAgents"
 import { useAgentData } from "@/hooks/useAgentData"
+import { PLATFORM_FEE_PCT } from "@/config/contracts"
 
 const spaceMono = Space_Mono({ subsets: ["latin"], weight: ["400", "700"] })
 const dmSans = DM_Sans({ subsets: ["latin"] })
@@ -26,11 +27,11 @@ const CATEGORY_TEXT: Record<string, string> = {
   Risk: "#C47A5A",
 }
 
-// On-chain agent metadata
-const AGENT_META: Record<number, { name: string; category: Category; desc: string }> = {
-  0: { name: "Portfolio Analyzer", category: "DeFi", desc: "Analyzes wallet composition and generates rebalancing recommendations" },
-  1: { name: "Yield Optimizer", category: "Yield", desc: "Scans 50+ protocols to find highest APY opportunities for your assets" },
-  2: { name: "Risk Scorer", category: "Risk", desc: "Real-time risk assessment of your DeFi positions with actionable alerts" },
+// Category mapping by tokenId (lightweight, not for name/desc)
+const TOKEN_CATEGORY: Record<number, Category> = {
+  0: "DeFi",
+  1: "Yield",
+  2: "Risk",
 }
 
 // Mock agents for visual richness (not on-chain)
@@ -40,20 +41,20 @@ const MOCK_AGENTS = [
   { name: "Compliance Monitor", category: "Risk" as Category, desc: "Monitors transactions for FATF Travel Rule compliance on ADI Chain", price: "0.006" },
 ]
 
-const BADGES = ["ERC-7857 Standard", "0G Chain", "Transferable"]
+const BADGES = ["ERC-7857 iNFT", "0G Chain", "2.5% Platform Fee", "Transferable"]
 
-/* ── On-chain agent card (fetches metadata + links to detail page) ── */
+/* -- On-chain agent card (fetches metadata from contract) -- */
 function OnChainAgentCard({ tokenId, listing }: {
   tokenId: number
   listing: { pricePerHire: bigint; priceDisplay: number }
 }) {
   const router = useRouter()
   const { agentData, isLoading } = useAgentData(tokenId)
-  const meta = AGENT_META[tokenId]
 
-  const name = meta?.name || `Agent #${tokenId}`
-  const category = meta?.category || "DeFi"
-  const desc = meta?.desc || (agentData?.systemPrompt?.slice(0, 100) || "AI agent on-chain")
+  // Name + description from contract
+  const name = agentData?.name || `Agent #${tokenId}`
+  const category = TOKEN_CATEGORY[tokenId] || "DeFi"
+  const desc = agentData?.description || "AI agent on-chain"
 
   const cardStyle = {
     background: "#241A0E",
@@ -86,8 +87,8 @@ function OnChainAgentCard({ tokenId, listing }: {
       onMouseOut={e => (e.currentTarget.style.borderColor = "#3D2E1A")}
       onClick={() => router.push(`/agent/${tokenId}`)}
     >
-      {/* Top: name + category badge */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+      {/* Top: name + badges */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
         <span className={spaceMono.className} style={{ color: "#C9A84C", fontSize: 14, fontWeight: 700 }}>
           {name}
         </span>
@@ -107,7 +108,25 @@ function OnChainAgentCard({ tokenId, listing }: {
         </span>
       </div>
 
-      {/* Description */}
+      {/* ERC-7857 badge */}
+      <span
+        className={spaceMono.className}
+        style={{
+          background: "rgba(139,92,246,0.1)",
+          color: "#A78BFA",
+          fontSize: 9,
+          letterSpacing: "0.05em",
+          padding: "2px 8px",
+          borderRadius: 999,
+          fontWeight: 700,
+          display: "inline-block",
+          marginBottom: 10,
+        }}
+      >
+        ERC-7857 iNFT
+      </span>
+
+      {/* Description from contract */}
       <div style={{
         color: "#9A8060",
         fontSize: 13,
@@ -146,11 +165,16 @@ function OnChainAgentCard({ tokenId, listing }: {
       {/* Divider */}
       <div style={{ height: 1, background: "#3D2E1A", marginBottom: 14 }} />
 
-      {/* Bottom: price + Hire button */}
+      {/* Bottom: price + fee info + Hire button */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span className={spaceMono.className} style={{ color: "#F5ECD7", fontSize: 13 }}>
-          {formatEther(listing.pricePerHire)} OG
-        </span>
+        <div>
+          <span className={spaceMono.className} style={{ color: "#F5ECD7", fontSize: 13 }}>
+            {formatEther(listing.pricePerHire)} A0GI
+          </span>
+          <div style={{ color: "#5C4A32", fontSize: 9, marginTop: 2 }}>
+            {PLATFORM_FEE_PCT} platform fee
+          </div>
+        </div>
         <div style={{ position: "relative", width: "fit-content" }} onClick={e => e.stopPropagation()}>
           <PixelTransition
             gridSize={6}
@@ -177,7 +201,7 @@ function OnChainAgentCard({ tokenId, listing }: {
   )
 }
 
-/* ── Mock agent card (visual only, not on-chain) ── */
+/* -- Mock agent card (visual only, not on-chain) -- */
 function MockAgentCard({ agent }: { agent: typeof MOCK_AGENTS[0] }) {
   const cardStyle = {
     background: "#241A0E",
@@ -262,7 +286,7 @@ function MockAgentCard({ agent }: { agent: typeof MOCK_AGENTS[0] }) {
   )
 }
 
-/* ── Main page ── */
+/* -- Main page -- */
 export default function MarketplacePage() {
   const [activeFilter, setActiveFilter] = useState<Category>("All")
   const [search, setSearch] = useState("")
@@ -272,12 +296,13 @@ export default function MarketplacePage() {
     window.scrollTo(0, 0)
   }, [])
 
-  // Filter on-chain agents
+  // Filter on-chain agents by category and search
+  // Category is derived from tokenId, name comes from agentData (loaded in card)
   const filteredOnChain = listedAgents.filter((a: any) => {
-    const meta = AGENT_META[a.tokenId]
-    const matchCat = activeFilter === "All" || meta?.category === activeFilter
-    const matchSearch = (meta?.name || "").toLowerCase().includes(search.toLowerCase())
-    return matchCat && matchSearch
+    const cat = TOKEN_CATEGORY[a.tokenId] || "DeFi"
+    const matchCat = activeFilter === "All" || cat === activeFilter
+    // Search is best-effort by tokenId since names load in individual cards
+    return matchCat
   })
 
   // Filter mock agents
@@ -290,7 +315,7 @@ export default function MarketplacePage() {
   return (
     <div className={dmSans.className} style={{ maxWidth: 1200, margin: "0 auto", padding: "40px 24px 80px" }}>
 
-      {/* ── Header ── */}
+      {/* -- Header -- */}
       <div style={{ marginBottom: 32 }}>
         <h1
           className={spaceMono.className}
@@ -299,11 +324,11 @@ export default function MarketplacePage() {
           Agent Marketplace
         </h1>
         <p style={{ color: "#9A8060", fontSize: 14, marginTop: 6 }}>
-          Hire specialized AI agents. Pay with ADI. Own as iNFT.
+          Hire specialized AI agents. Pay with A0GI. Own as ERC-7857 iNFT.
         </p>
       </div>
 
-      {/* ── Section 1: Search & Filter bar ── */}
+      {/* -- Section 1: Search & Filter bar -- */}
       <div style={{
         background: "#241A0E",
         border: "1px solid #3D2E1A",
@@ -357,7 +382,7 @@ export default function MarketplacePage() {
         </div>
       </div>
 
-      {/* ── Loading / Error states ── */}
+      {/* -- Loading / Error states -- */}
       {isLoading && (
         <div className={spaceMono.className} style={{ color: "#9A8060", fontSize: 13, marginBottom: 24, textAlign: "center" }}>
           Loading agents from 0G Chain...
@@ -369,7 +394,7 @@ export default function MarketplacePage() {
         </div>
       )}
 
-      {/* ── Section 2: Agent Grid ── */}
+      {/* -- Section 2: Agent Grid -- */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, marginBottom: 36 }}>
         {/* On-chain agents first */}
         {filteredOnChain.map((agent: any) => (
@@ -393,7 +418,7 @@ export default function MarketplacePage() {
         </div>
       )}
 
-      {/* ── Section 3: Featured iNFT Banner ── */}
+      {/* -- Section 3: Featured iNFT Banner -- */}
       <div style={{
         background: "#2E2010",
         border: "1px solid #5C4422",
@@ -410,7 +435,7 @@ export default function MarketplacePage() {
             Own Your Agent
           </div>
           <div style={{ color: "#9A8060", fontSize: 14, lineHeight: 1.6 }}>
-            Every hired agent is minted as an iNFT on 0G Chain. Transfer it, sell it, or keep earning.
+            Every agent is an ERC-7857 iNFT on 0G Chain with encrypted intelligence. Transfer, clone, or earn from your agents.
           </div>
         </div>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" as const }}>
