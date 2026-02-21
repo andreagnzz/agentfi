@@ -76,7 +76,7 @@ export default function TopBar() {
             }}
           >
             {mode === "compliant" && (
-              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#7A9E6E", flexShrink: 0 }} />
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#4A90D9", flexShrink: 0 }} />
             )}
             COMPLIANT
           </button>
@@ -100,7 +100,7 @@ export default function TopBar() {
             }}
           >
             {mode === "permissionless" && (
-              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#C9A84C", flexShrink: 0 }} />
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#7A9E6E", flexShrink: 0 }} />
             )}
             PERMISSIONLESS
           </button>
