@@ -8,6 +8,7 @@ interface CurvedLoopProps {
   className?: string
   curveAmount?: number
   direction?: 'left' | 'right'
+  fontSize?: number
 }
 
 const CurvedLoop: FC<CurvedLoopProps> = ({
@@ -16,6 +17,7 @@ const CurvedLoop: FC<CurvedLoopProps> = ({
   className,
   curveAmount = 400,
   direction = 'left',
+  fontSize,
 }) => {
   const text = useMemo(() => {
     const hasTrailing = /\s|\u00A0$/.test(marqueeText)
@@ -73,7 +75,7 @@ const CurvedLoop: FC<CurvedLoopProps> = ({
           <path id={pathId} d={pathD} fill="none" stroke="transparent" />
         </defs>
         {ready && (
-          <text fontWeight="bold" xmlSpace="preserve" className={className}>
+          <text fontWeight="bold" xmlSpace="preserve" className={className} {...(fontSize ? { fontSize } : {})}>
             <textPath ref={textPathRef} href={`#${pathId}`} startOffset={`${-spacing}px`} xmlSpace="preserve">
               {totalText}
             </textPath>

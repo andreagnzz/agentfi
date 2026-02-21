@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import dynamic from "next/dynamic"
 import { Space_Mono, DM_Sans } from "next/font/google"
 import PixelTransition from "@/components/PixelTransition"
@@ -15,20 +15,32 @@ const dmSans = DM_Sans({ subsets: ["latin"] })
 
 const LINES = [
   { text: "AgentFi v1.0.0", color: "#C9A84C" },
+  { text: "Initializing multi-chain runtime...", color: "#9A8060" },
   { text: "Connecting to ADI Chain... ✓", color: "#7A9E6E" },
+  { text: "Connecting to 0G Chain... ✓", color: "#7A9E6E" },
+  { text: "Connecting to Hedera testnet... ✓", color: "#7A9E6E" },
   { text: "Loading agent registry... ✓", color: "#7A9E6E" },
-  { text: 'Agent: Portfolio Analyzer', color: "#F5ECD7" },
+  { text: "─────────────────────────────", color: "#3D2E1A" },
+  { text: "3 agents available", color: "#F5ECD7" },
+  { text: "Agent: Portfolio Analyzer", color: "#F5ECD7" },
   { text: 'Query: "Analyze my DeFi positions"', color: "#9A8060" },
-  { text: "Running on Hedera via Agent Kit...", color: "#9A8060" },
-  { text: "─────────────────────", color: "#3D2E1A" },
-  { text: "RESULT: High ETH concentration", color: "#F5ECD7" },
-  { text: "Risk Score: 7.2/10", color: "#C47A5A" },
-  { text: "Recommendation: Rebalance →", color: "#F5ECD7" },
-  { text: "yield_optimizer executing...", color: "#9A8060" },
-  { text: "APY found: 12.4% (Aave v3)", color: "#7A9E6E" },
-  { text: "─────────────────────", color: "#3D2E1A" },
-  { text: "Payment: 0.01 ADI ✓ settled", color: "#7A9E6E" },
-  { text: "iNFT #0042 minted on 0G ✓", color: "#C9A84C" },
+  { text: "Routing to Hedera Agent Kit...", color: "#9A8060" },
+  { text: "HCS-10 topic created: 0.0.5284631", color: "#818CF8" },
+  { text: "Running analysis...", color: "#9A8060" },
+  { text: "─────────────────────────────", color: "#3D2E1A" },
+  { text: "RESULT: High ETH concentration (72%)", color: "#F5ECD7" },
+  { text: "Risk Score: 7.2/10 — volatile", color: "#C47A5A" },
+  { text: "Recommendation: Rebalance portfolio →", color: "#F5ECD7" },
+  { text: "Spawning yield_optimizer agent...", color: "#9A8060" },
+  { text: "Scanning Aave v3, Compound, Lido...", color: "#9A8060" },
+  { text: "Best APY found: 12.4% (Aave v3 USDC)", color: "#7A9E6E" },
+  { text: "─────────────────────────────", color: "#3D2E1A" },
+  { text: "KYC check on ADI Chain... ✓ verified", color: "#7A9E6E" },
+  { text: "Payment: 0.01 ADI → settled ✓", color: "#7A9E6E" },
+  { text: "FATF Travel Rule: compliant ✓", color: "#7A9E6E" },
+  { text: "Minting iNFT on 0G Chain...", color: "#9A8060" },
+  { text: "iNFT #0042 minted (ERC-7857) ✓", color: "#C9A84C" },
+  { text: "Session complete. Agent ready.", color: "#C9A84C" },
 ]
 
 export default function HomePage() {
@@ -36,6 +48,7 @@ export default function HomePage() {
   const [currentLine, setCurrentLine] = useState(0)
   const [currentChar, setCurrentChar] = useState(0)
   const [currentText, setCurrentText] = useState("")
+  const terminalRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (currentLine >= LINES.length) return
@@ -46,7 +59,7 @@ export default function HomePage() {
       const timeout = setTimeout(() => {
         setCurrentText(prev => prev + line.text[currentChar])
         setCurrentChar(prev => prev + 1)
-      }, 28)
+      }, 16)
       return () => clearTimeout(timeout)
     } else {
       const timeout = setTimeout(() => {
@@ -54,10 +67,23 @@ export default function HomePage() {
         setCurrentText("")
         setCurrentChar(0)
         setCurrentLine(prev => prev + 1)
-      }, 80)
+      }, 45)
       return () => clearTimeout(timeout)
     }
   }, [currentLine, currentChar])
+
+  // Auto-scroll terminal as content grows
+  useEffect(() => {
+    if (terminalRef.current) {
+      terminalRef.current.scrollTop = terminalRef.current.scrollHeight
+    }
+  }, [displayedLines, currentText])
+
+  // Dynamic terminal height — grows with content, caps at max
+  const visibleLines = displayedLines.length + (currentLine < LINES.length ? 1 : 0)
+  const lineH = 21.6 // 12px font * 1.8 line-height
+  const maxContentH = 380
+  const dynamicContentH = Math.min(maxContentH, Math.max(80, visibleLines * lineH))
 
   return (
     <>
@@ -203,15 +229,26 @@ export default function HomePage() {
                 </GlareHover>
               </div>
 
-              <div style={{ width: "100%", marginTop: 24, overflow: "hidden" }}>
-                <CurvedLoop marqueeText="✦ ETHDenver 2026 ✦ ETHDenver 2026 ✦ ETHDenver 2026 ✦ " speed={0.4} curveAmount={60} direction="left" className="curved-text-gold"/>
-                <CurvedLoop marqueeText="✦ Marketplace Agents ✦ Marketplace Agents ✦ Marketplace Agents ✦ " speed={0.5} curveAmount={80} direction="right" className="curved-text-gold"/>
-                <CurvedLoop marqueeText="✦ Multi-Chain ✦ Multi-Chain ✦ Multi-Chain ✦ Multi-Chain ✦ " speed={0.3} curveAmount={50} direction="left" className="curved-text-gold"/>
+              {/* LogoCarousel — below CTA */}
+              <div className="fade-in-up mb-6" style={{ animationDelay: "400ms" }}>
+                <LogoCarousel />
+              </div>
+
+              {/* Single big info marquee */}
+              <div style={{ width: "100%", overflow: "hidden" }}>
+                <CurvedLoop
+                  marqueeText="✦ ETHDenver 2026 ✦ AI Agent Marketplace ✦ Multi-Chain DeFAI ✦ iNFT ERC-7857 ✦ ADI Compliance ✦ Hedera Agents ✦ "
+                  speed={0.4}
+                  curveAmount={60}
+                  direction="left"
+                  className="curved-text-gold"
+                  fontSize={24}
+                />
               </div>
             </div>
 
             {/* Right — Terminal */}
-            <div className="flex items-center lg:col-span-2">
+            <div className="flex items-start lg:col-span-2" style={{ paddingTop: 24 }}>
               <div
                 className="glow-card w-full overflow-hidden rounded-xl backdrop-blur"
                 style={{ background: "var(--bg-surface)", border: "1px solid var(--border-bright)" }}
@@ -224,38 +261,31 @@ export default function HomePage() {
                     agentfi-terminal
                   </span>
                 </div>
-                <div className="p-5">
-                  <div style={{ fontFamily: "monospace", fontSize: 12, lineHeight: 1.8, display: "flex", flexDirection: "column", gap: 2 }}>
-                    {displayedLines.map((line, i) => (
-                      <div key={i} style={{ color: line.color }}>{line.text}</div>
-                    ))}
-                    {currentLine < LINES.length && (
-                      <div style={{ color: LINES[currentLine].color }}>
-                        {currentText}<span style={{ animation: "blink 1s infinite", color: "#C9A84C" }}>▋</span>
-                      </div>
-                    )}
+                {/* Terminal content — dynamic height + auto-scroll */}
+                <div style={{ overflow: "hidden" }}>
+                  <div
+                    ref={terminalRef}
+                    className="p-5"
+                    style={{
+                      height: dynamicContentH,
+                      overflowY: "auto",
+                      transition: "height 0.15s ease-out",
+                    }}
+                  >
+                    <div style={{ fontFamily: "monospace", fontSize: 12, lineHeight: 1.8, display: "flex", flexDirection: "column", gap: 2 }}>
+                      {displayedLines.map((line, i) => (
+                        <div key={i} style={{ color: line.color }}>{line.text}</div>
+                      ))}
+                      {currentLine < LINES.length && (
+                        <div style={{ color: LINES[currentLine].color }}>
+                          {currentText}<span style={{ animation: "blink 1s infinite", color: "#C9A84C" }}>▋</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
-
-        {/* ── Section 2: Multi-Chain by Design ── */}
-        <section className="px-6 py-20" style={{ borderTop: "1px solid var(--border)" }}>
-          <div className="mx-auto flex max-w-5xl flex-col items-center gap-12">
-            <div className="text-center">
-              <h2
-                className={`${spaceMono.className} mb-3 text-3xl font-bold`}
-                style={{ color: "var(--text-primary)", letterSpacing: "0.02em" }}
-              >
-                Multi-Chain by Design
-              </h2>
-              <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                Each chain plays a specific role in the agent economy
-              </p>
-            </div>
-            <LogoCarousel />
           </div>
         </section>
       </main>
