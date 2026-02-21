@@ -59,7 +59,7 @@ export default function HomePage() {
       const timeout = setTimeout(() => {
         setCurrentText(prev => prev + line.text[currentChar])
         setCurrentChar(prev => prev + 1)
-      }, 16)
+      }, 22)
       return () => clearTimeout(timeout)
     } else {
       const timeout = setTimeout(() => {
@@ -67,7 +67,7 @@ export default function HomePage() {
         setCurrentText("")
         setCurrentChar(0)
         setCurrentLine(prev => prev + 1)
-      }, 45)
+      }, 60)
       return () => clearTimeout(timeout)
     }
   }, [currentLine, currentChar])
@@ -79,11 +79,10 @@ export default function HomePage() {
     }
   }, [displayedLines, currentText])
 
-  // Dynamic terminal height — grows with content, caps at max
+  // Dynamic terminal height — grows with content, no cap
   const visibleLines = displayedLines.length + (currentLine < LINES.length ? 1 : 0)
   const lineH = 21.6 // 12px font * 1.8 line-height
-  const maxContentH = 380
-  const dynamicContentH = Math.min(maxContentH, Math.max(80, visibleLines * lineH))
+  const dynamicContentH = Math.max(120, visibleLines * lineH + 48 + 32)
 
   return (
     <>
@@ -153,7 +152,7 @@ export default function HomePage() {
       <main className={`${dmSans.className} relative min-h-screen`}>
 
         {/* ── Section 1: Hero ── */}
-        <section className="relative mx-auto flex min-h-screen max-w-7xl items-center px-6" style={{ paddingTop: "40px", paddingBottom: "80px" }}>
+        <section className="relative mx-auto max-w-7xl px-6" style={{ paddingTop: "100px", paddingBottom: "80px", minHeight: "100vh" }}>
           <div className="grid w-full gap-12 lg:grid-cols-5">
             {/* Left */}
             <div className="flex flex-col justify-center lg:col-span-3">
@@ -261,27 +260,25 @@ export default function HomePage() {
                     agentfi-terminal
                   </span>
                 </div>
-                {/* Terminal content — dynamic height + auto-scroll */}
-                <div style={{ overflow: "hidden" }}>
-                  <div
-                    ref={terminalRef}
-                    className="p-5"
-                    style={{
-                      height: dynamicContentH,
-                      overflowY: "auto",
-                      transition: "height 0.15s ease-out",
-                    }}
-                  >
-                    <div style={{ fontFamily: "monospace", fontSize: 12, lineHeight: 1.8, display: "flex", flexDirection: "column", gap: 2 }}>
-                      {displayedLines.map((line, i) => (
-                        <div key={i} style={{ color: line.color }}>{line.text}</div>
-                      ))}
-                      {currentLine < LINES.length && (
-                        <div style={{ color: LINES[currentLine].color }}>
-                          {currentText}<span style={{ animation: "blink 1s infinite", color: "#C9A84C" }}>▋</span>
-                        </div>
-                      )}
-                    </div>
+                {/* Terminal content — dynamic height, no maxHeight constraint */}
+                <div
+                  ref={terminalRef}
+                  className="p-5"
+                  style={{
+                    height: dynamicContentH,
+                    overflowY: "auto",
+                    transition: "height 0.15s ease-out",
+                  }}
+                >
+                  <div style={{ fontFamily: "monospace", fontSize: 12, lineHeight: 1.8, display: "flex", flexDirection: "column", gap: 2 }}>
+                    {displayedLines.map((line, i) => (
+                      <div key={i} style={{ color: line.color }}>{line.text}</div>
+                    ))}
+                    {currentLine < LINES.length && (
+                      <div style={{ color: LINES[currentLine].color }}>
+                        {currentText}<span style={{ animation: "blink 1s infinite", color: "#C9A84C" }}>▋</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
