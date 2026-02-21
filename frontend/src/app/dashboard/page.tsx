@@ -13,6 +13,7 @@ import { useAppMode } from "@/context/AppModeContext"
 import { useEarnings, formatEarnings } from "@/hooks/useEarnings"
 import { useLiveActivity } from "@/hooks/useLiveActivity"
 import FadeContent from "@/components/FadeContent"
+import BlurText from "@/components/BlurText"
 
 const spaceMono = Space_Mono({ subsets: ["latin"], weight: ["400", "700"] })
 const dmSans = DM_Sans({ subsets: ["latin"] })
@@ -375,17 +376,21 @@ export default function DashboardPage() {
         gap: 24,
         marginBottom: 36,
       }}>
-        <FadeContent blur duration={900} delay={100}>
-          <div>
-            <h2 style={{
+        <div>
+          <BlurText
+            text="Create & Mint New Agent"
+            animateBy="words"
+            direction="top"
+            delay={80}
+            style={{
               fontFamily: "'Space Mono', monospace",
               fontSize: "clamp(20px, 2.5vw, 32px)",
               fontWeight: 700,
               color: "#F5ECD7",
               marginBottom: 8,
-            }}>
-              Create &amp; Mint New Agent
-            </h2>
+            }}
+          />
+          <FadeContent blur duration={800} delay={200}>
             <p style={{
               fontFamily: "'Space Mono', monospace",
               fontSize: 11,
@@ -395,26 +400,41 @@ export default function DashboardPage() {
             }}>
               Deploy your agent as an ERC-7857 iNFT on 0G Chain
             </p>
-          </div>
-        </FadeContent>
-        <button
-          onClick={() => router.push("/dashboard/create")}
-          className={spaceMono.className}
-          style={{
-            background: "#C9A84C",
-            color: "#1A1208",
-            border: "none",
-            borderRadius: 8,
-            padding: "12px 28px",
-            fontSize: 12,
-            fontWeight: 700,
-            letterSpacing: "0.05em",
-            cursor: "pointer",
-            flexShrink: 0,
-          }}
-        >
-          Create Agent &rarr;
-        </button>
+          </FadeContent>
+        </div>
+        <div style={{ position: "relative", flexShrink: 0 }}>
+          <PixelTransition
+            gridSize={6}
+            pixelColor="#C9A84C"
+            animationStepDuration={0.2}
+            aspectRatio="0%"
+            style={{ width: 170, height: 40, borderRadius: 8, overflow: "hidden" }}
+            firstContent={
+              <div
+                style={{
+                  position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center",
+                  fontFamily: "monospace", fontSize: 12, fontWeight: "bold", letterSpacing: "0.05em",
+                  borderRadius: 8, cursor: "pointer", background: "#C9A84C", color: "#1A1208",
+                }}
+                onClick={() => router.push("/dashboard/create")}
+              >
+                Create Agent &rarr;
+              </div>
+            }
+            secondContent={
+              <div
+                style={{
+                  position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center",
+                  fontFamily: "monospace", fontSize: 12, fontWeight: "bold", letterSpacing: "0.05em",
+                  borderRadius: 8, cursor: "pointer", background: "#E8C97A", color: "#1A1208",
+                }}
+                onClick={() => router.push("/dashboard/create")}
+              >
+                Create Agent &rarr;
+              </div>
+            }
+          />
+        </div>
       </div>
 
       {/* ── Section 4: Live Activity & Performance ── */}
