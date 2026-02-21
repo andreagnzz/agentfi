@@ -67,9 +67,9 @@ const FALLBACK_NAMES: Record<number, string> = {
 
 // Mock agents for visual richness (not on-chain)
 const MOCK_AGENTS = [
-  { name: "Cross-Chain Arbitrage", category: "DeFi" as Category, desc: "Identifies arbitrage opportunities across 0G, ADI, and EVM chains", price: "0.015" },
-  { name: "Liquidity Manager", category: "Yield" as Category, desc: "Manages LP positions automatically to maximize fee revenue", price: "0.012" },
-  { name: "Compliance Monitor", category: "Risk" as Category, desc: "Monitors transactions for FATF Travel Rule compliance on ADI Chain", price: "0.006" },
+  { name: "Cross-Chain Arbitrage", category: "DeFi" as Category, desc: "Identifies arbitrage opportunities across 0G, ADI, and EVM chains", price: "0.01" },
+  { name: "Liquidity Manager", category: "Yield" as Category, desc: "Manages LP positions automatically to maximize fee revenue", price: "0.01" },
+  { name: "Compliance Monitor", category: "Risk" as Category, desc: "Monitors transactions for FATF Travel Rule compliance on ADI Chain", price: "0.01" },
 ]
 
 
@@ -219,7 +219,7 @@ function OnChainAgentCard({ tokenId, listing }: {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div>
           <span className={spaceMono.className} style={{ color: "#F5ECD7", fontSize: 13 }}>
-            {formatEther(listing.pricePerHire)} {currencySymbol}
+            0.01 OG
           </span>
           <div style={{ color: "#5C4A32", fontSize: 9, marginTop: 2 }}>
             {PLATFORM_FEE_PCT} platform fee
@@ -326,7 +326,7 @@ function MockAgentCard({ agent }: { agent: typeof MOCK_AGENTS[0] }) {
       {/* Bottom: price */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <span className={spaceMono.className} style={{ color: "#F5ECD7", fontSize: 13 }}>
-          {agent.price} ADI
+          {agent.price} OG
         </span>
         <span className={spaceMono.className} style={{ color: "#5C4A32", fontSize: 11 }}>
           Not yet deployed
