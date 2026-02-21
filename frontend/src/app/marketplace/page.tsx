@@ -9,6 +9,8 @@ import { useListedAgents } from "@/hooks/useListedAgents"
 import { useAgentData } from "@/hooks/useAgentData"
 import { useAppMode } from "@/context/AppModeContext"
 import { PLATFORM_FEE_PCT } from "@/config/contracts"
+import KYCGate from "@/components/KYCGate"
+import FadeContent from "@/components/FadeContent"
 
 const spaceMono = Space_Mono({ subsets: ["latin"], weight: ["400", "700"] })
 const dmSans = DM_Sans({ subsets: ["latin"] })
@@ -48,7 +50,6 @@ const MOCK_AGENTS = [
   { name: "Compliance Monitor", category: "Risk" as Category, desc: "Monitors transactions for FATF Travel Rule compliance on ADI Chain", price: "0.006" },
 ]
 
-const BADGES = ["ERC-7857 iNFT", "0G Chain", "2.5% Platform Fee", "Transferable"]
 
 /* -- On-chain agent card (fetches metadata from contract) -- */
 function OnChainAgentCard({ tokenId, listing }: {
@@ -341,6 +342,7 @@ export default function MarketplacePage() {
   })
 
   return (
+    <KYCGate>
     <div className={dmSans.className} style={{ maxWidth: 1200, margin: "0 auto", padding: "40px 24px 80px" }}>
 
       {/* -- Header -- */}
@@ -446,45 +448,36 @@ export default function MarketplacePage() {
         </div>
       )}
 
-      {/* -- Section 3: Featured iNFT Banner -- */}
-      <div style={{
-        background: "#2E2010",
-        border: "1px solid #5C4422",
-        borderRadius: 12,
-        padding: 28,
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        gap: 24,
-        flexWrap: "wrap" as const,
-      }}>
-        <div style={{ flex: 1, minWidth: 280 }}>
-          <div className={spaceMono.className} style={{ color: "#F5ECD7", fontSize: 20, fontWeight: 700, marginBottom: 8 }}>
-            Own Your Agent
-          </div>
-          <div style={{ color: "#9A8060", fontSize: 14, lineHeight: 1.6 }}>
-            Every agent is an ERC-7857 iNFT on 0G Chain with encrypted intelligence. Transfer, clone, or earn from your agents.
-          </div>
-        </div>
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" as const }}>
-          {BADGES.map(badge => (
-            <span
-              key={badge}
-              className={spaceMono.className}
-              style={{
-                background: "#1A1208",
-                border: "1px solid #3D2E1A",
-                color: "#C9A84C",
-                fontSize: 11,
-                padding: "6px 12px",
-                borderRadius: 6,
-              }}
-            >
-              {badge}
-            </span>
-          ))}
-        </div>
+      {/* -- Section 3: Own Your Agent -- */}
+      <div style={{ padding: "80px 40px", textAlign: "center" }}>
+        <FadeContent blur duration={1000} delay={100}>
+          <h2 style={{
+            fontFamily: "'Space Mono', monospace",
+            fontSize: "clamp(28px, 4vw, 52px)",
+            fontWeight: 700,
+            color: "#F5ECD7",
+            lineHeight: 1.15,
+            marginBottom: "16px",
+          }}>
+            Own Your Agent.
+          </h2>
+        </FadeContent>
+        <FadeContent blur duration={1000} delay={300}>
+          <p style={{
+            fontFamily: "'Space Mono', monospace",
+            fontSize: "14px",
+            color: "#9A8060",
+            letterSpacing: "0.1em",
+            maxWidth: "500px",
+            margin: "0 auto",
+            lineHeight: 1.7,
+          }}>
+            Every agent you hire is minted as an ERC-7857 iNFT on 0G Chain.<br/>
+            Transferable. Sellable. Yours forever.
+          </p>
+        </FadeContent>
       </div>
     </div>
+    </KYCGate>
   )
 }
