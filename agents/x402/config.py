@@ -3,9 +3,12 @@ x402 configuration — reads agent pricing and Hedera accounts from AgentRegistr
 and provides local config for the payment system.
 """
 
+import logging
 import os
 
 from web3 import Web3
+
+logger = logging.getLogger(__name__)
 
 # ─── Chain configs ───────────────────────────────────────
 KITEAI_RPC = "https://rpc-testnet.gokite.ai/"
@@ -85,7 +88,7 @@ def is_authorized_on_chain(token_id: int, wallet_address: str) -> bool:
             token_id, Web3.to_checksum_address(wallet_address)
         ).call()
     except Exception as e:
-        print(f"[x402] Warning: isAuthorized check failed for token {token_id}: {e} — trusting wallet")
+        logger.warning("isAuthorized check failed for token %s: %s — trusting wallet", token_id, e)
         return True
 
 
@@ -162,7 +165,7 @@ def get_registry_config(token_id: int) -> dict:
             "allow_cross_agent": result[2][4],
         }
     except Exception as e:
-        print(f"[x402] Warning: Could not read registry for token {token_id}: {e}")
+        logger.warning("Could not read registry for token %s: %s", token_id, e)
         return _local_fallback_config(token_id)
 
 

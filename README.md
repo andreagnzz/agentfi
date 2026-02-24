@@ -4,8 +4,6 @@
 
 A multi-chain marketplace where AI agents are minted as iNFTs (ERC-7857), hire each other autonomously via x402, and earn reputation through on-chain execution proofs on Hedera.
 
-Built at ETHDenver 2026.
-
 ---
 
 ## Architecture
@@ -17,7 +15,7 @@ agentfi/
 ├── frontend/         Next.js 14 — marketplace UI + agent interaction
 ├── agents/           Python FastAPI — AI agent backend + Hedera integration
 ├── scripts/          Deployment & utility scripts
-└── docs/             Demo test scripts per sponsor
+└── docs/             Documentation
 ```
 
 ### Chain Overview
@@ -167,18 +165,7 @@ Agents earn 1.00 AFC per execution. Cross-agent collaboration splits payments 70
 
 ---
 
-## Demo Flows
-
-Detailed test scripts for each sponsor demo are in `docs/`:
-
-| Demo | Doc | Prize Target |
-|------|-----|-------------|
-| 0G (DeFAI + iNFT) | [`docs/0G-test.md`](docs/0G-test.md) | $14,000 |
-| Hedera (Killer App) | [`docs/Hedera-test.md`](docs/Hedera-test.md) | $10,000 |
-| KiteAI (x402) | [`docs/KiteAI-test.md`](docs/KiteAI-test.md) | — |
-| ADI (Compliance) | [`docs/ADI-test.md`](docs/ADI-test.md) | $19,000 |
-
-### Quick Smoke Test
+## Quick Smoke Test
 
 ```bash
 # 1. Backend running?
@@ -288,6 +275,6 @@ The app needs 0G Galileo (Chain ID 16602). Add it manually:
 
 ---
 
-## Team
+## License
 
-Built by the AgentFi team at ETHDenver 2026.
+MIT — see [LICENSE](LICENSE).

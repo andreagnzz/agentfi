@@ -9,7 +9,7 @@
 contracts/cache/
 contracts/out/
 # NOTE: contracts/out/ is gitignored globally.
-# ABIs are synced MANUALLY to frontend/src/abi/ by Person A after each deploy.
+# ABIs are synced manually to frontend/src/abi/ after each deploy.
 # Never commit compiled artifacts — only the manually synced ABIs.
 
 # ─── Hardhat / ADI (zkSync) ────────────────────────────────────────
@@ -50,9 +50,26 @@ Thumbs.db
 # ─── Editor / Tools ──────────────────────────────────────────────────
 .vscode/settings.json
 .idea/
-.claude/settings.local.json
+.claude/
+*/.claude/
 *.swp
 *.swo
+
+# ─── AI context files ──────────────────────────────────────────────
+CLAUDE.md
+*/CLAUDE.md
+
+# ─── Internal docs (pitches, test scripts, PRD) ───────────────────
+PRD.md
+docs/*-pitch.md
+docs/*-test.md
+docs/demo-specs.md
+docs/implementation-spec.md
+agents/HEDERA_INTEGRATION.md
+
+# ─── Demo / scratch files ─────────────────────────────────────────
+*-demo.txt
+*-pitch.md
 
 # Others
 notes.txt
