@@ -1,6 +1,10 @@
+# FIXED_VERSION=2026-02-21-NO-LOCALHOST
 """
 Cross-Agent Collaboration Service — enables agents to hire other agents.
 Uses AFC tokens on Hedera for payment, with x402 protocol for communication.
+
+Sub-agent calls use direct Python function calls via agent_factory.
+No HTTP calls to localhost — works on Railway and all cloud platforms.
 """
 
 import logging
@@ -32,12 +36,11 @@ class CrossAgentService:
         self,
         afc_payment_service,
         hedera_mirror_url: str = "https://testnet.mirrornode.hedera.com",
-        backend_base_url: str = "http://localhost:8000",
         afc_token_id: str = "",
+        **kwargs,
     ):
         self.afc_payment = afc_payment_service
         self.mirror_url = hedera_mirror_url
-        self.backend_url = backend_base_url
         self.afc_token_id = afc_token_id
 
     async def get_agent_afc_balance(self, hedera_account: str) -> float:
@@ -66,9 +69,7 @@ class CrossAgentService:
         main_result: str,
         cross_agent_enabled: bool = True,
     ) -> dict:
-        """
-        Attempt cross-agent collaboration for a richer result.
-        """
+        """Attempt cross-agent collaboration for a richer result."""
         report = []
         payments = []
         additional_results = []
@@ -186,31 +187,23 @@ class CrossAgentService:
 
     async def _call_agent_internal(self, agent_name: str, query: str) -> str:
         """
-        Call another AgentFi agent internally (server-to-server).
-        Uses X-AgentFi-Internal header to bypass x402 (already paid via AFC).
+        Call another AgentFi agent via direct Python function call.
+        Uses agent_factory.create_agentfi_agent + ainvoke — the exact same
+        code path as the FastAPI /execute route, but with zero HTTP.
         """
-        try:
-            async with httpx.AsyncClient(timeout=60) as client:
-                resp = await client.post(
-                    f"{self.backend_url}/agents/{agent_name}/execute",
-                    json={"query": query},
-                    headers={
-                        "X-AgentFi-Internal": "true",
-                        "Content-Type": "application/json",
-                    },
-                )
-                if resp.status_code == 200:
-                    data = resp.json()
-                    # Navigate the AgentResponse wrapper
-                    if data.get("data") and isinstance(data["data"], dict):
-                        return data["data"].get("result", "No result returned")
-                    return data.get("result", str(data.get("data", "No result returned")))
-                else:
-                    logger.error(f"Internal call to {agent_name} returned {resp.status_code}")
-                    return f"[{agent_name} returned error {resp.status_code}]"
-        except Exception as e:
-            logger.error(f"Internal call to {agent_name} failed: {e}")
-            raise
+        from agent_factory import create_agentfi_agent
+
+        agent = create_agentfi_agent(agent_name)
+        result = await agent.ainvoke(
+            {"messages": [{"role": "user", "content": query}]},
+        )
+        messages = result.get("messages", [])
+        if messages:
+            last = messages[-1]
+            if hasattr(last, "content"):
+                return last.content
+            return str(last)
+        return str(result)
 
     async def _self_compute_fallback(self, caller: str, target: str, query: str) -> str:
         """Generate a simplified version of what the target agent would provide."""

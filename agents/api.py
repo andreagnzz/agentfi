@@ -73,15 +73,24 @@ except Exception as _e:
 
     class ADIComplianceService:
         def __init__(self): self.enabled = False
-        async def verify_kyc(self, *a: Any, **kw: Any) -> dict: return {"verified": False}
-        async def record_payment(self, *a: Any, **kw: Any) -> dict: return {}
-        async def check_compliance(self, *a: Any, **kw: Any) -> dict: return {"compliant": True}
+        def is_kyc_verified(self, wallet_address: str) -> bool: return False
+        def verify_adi_payment(self, payment_id: int) -> dict | None: return None
+        async def record_execution_receipt(self, *a: Any, **kw: Any) -> str | None: return None
+        def get_compliance_stats(self) -> dict: return {"enabled": False}
 
     class MockADIComplianceService:
-        def __init__(self): self.enabled = False
-        async def verify_kyc(self, *a: Any, **kw: Any) -> dict: return {"verified": True, "kyc_tier": 2, "jurisdiction": "US"}
-        async def record_payment(self, *a: Any, **kw: Any) -> dict: return {"tx_hash": "0xmock", "status": "recorded"}
-        async def check_compliance(self, *a: Any, **kw: Any) -> dict: return {"compliant": True}
+        def __init__(self):
+            self.enabled = True
+            self._verified_wallets: set = set()
+        def is_kyc_verified(self, wallet_address: str) -> bool: return wallet_address.lower() in self._verified_wallets
+        def mock_verify_kyc(self, wallet_address: str) -> bool:
+            self._verified_wallets.add(wallet_address.lower())
+            return True
+        def verify_adi_payment(self, payment_id: int) -> dict | None: return None
+        async def record_execution_receipt(self, *a: Any, **kw: Any) -> str | None: return None
+        def get_compliance_stats(self) -> dict:
+            return {"enabled": True, "mock": True, "total_kyc_users": len(self._verified_wallets),
+                    "total_payments": 0, "total_volume_adi": "0", "service_count": 0}
 
 logging.basicConfig(
     level=logging.INFO,
@@ -114,7 +123,6 @@ else:
 
 cross_agent_service = CrossAgentService(
     afc_payment_service=_afc_payment_svc,
-    backend_base_url=os.getenv("BACKEND_BASE_URL", "http://localhost:8000"),
     afc_token_id=os.getenv("HEDERA_TOKEN_ID", ""),
 )
 

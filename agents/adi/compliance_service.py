@@ -170,8 +170,9 @@ class ADIComplianceService:
             tx_hash = self.w3.eth.send_raw_transaction(signed.raw_transaction)
             receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=60)
 
-            logger.info(f"[ADI] Execution receipt recorded. TX: {tx_hash.hex()}")
-            return tx_hash.hex()
+            hex_hash = f"0x{tx_hash.hex()}"
+            logger.info(f"[ADI] Execution receipt recorded. TX: {hex_hash}")
+            return hex_hash
         except Exception as e:
             logger.error(f"[ADI] Receipt recording failed: {e}")
             return None
